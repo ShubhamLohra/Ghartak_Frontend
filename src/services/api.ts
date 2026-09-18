@@ -1,6 +1,7 @@
 import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
 
-const API_BASE = '/api';
+// Dynamic API Base URL: Uses VITE_API_URL env variable if present, or falls back to relative /api or default Render backend
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export const api = {
   // Auth
