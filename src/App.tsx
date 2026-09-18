@@ -17,7 +17,7 @@ import { Footer } from './components/Footer';
 import { ServiceCategory, ServiceItem } from './types';
 import { api } from './services/api';
 
-// Ghar Tak - A to Z Solution in One Tap - Production Build
+// Ghar Tak - "A to Z Solution in One Tap" - Production Deployment
 const AppContent: React.FC = () => {
   const { activeView } = useCart();
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
