@@ -1,7 +1,9 @@
 import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
 
-// Dynamic API Base URL: Uses VITE_API_URL env variable if present, or falls back to relative /api or default Render backend
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+// Live Render Spring Boot Backend URL
+const PRODUCTION_BACKEND_URL = 'https://ghartak-backend-p38q.onrender.com/api';
+
+const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_BACKEND_URL;
 
 export const api = {
   // Auth
