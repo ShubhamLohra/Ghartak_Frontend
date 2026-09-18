@@ -17,12 +17,12 @@ import { Footer } from './components/Footer';
 import { ServiceCategory, ServiceItem } from './types';
 import { api } from './services/api';
 
+// Ghar Tak - A to Z Solution in One Tap - Production Build
 const AppContent: React.FC = () => {
-  const { activeView, setActiveView } = useCart();
+  const { activeView } = useCart();
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<ServiceItem[]>([]);
 
   useEffect(() => {
     api.getCategories()
@@ -32,9 +32,6 @@ const AppContent: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    if (query.trim()) {
-      api.searchServices(query).then(setSearchResults).catch(() => {});
-    }
   };
 
   const handleSelectCategoryByCode = (code: string) => {
