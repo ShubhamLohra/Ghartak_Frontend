@@ -61,7 +61,14 @@ export const RawMaterialMarketplace: React.FC = () => {
               
               <div>
                 <div className="relative h-44 rounded-xl overflow-hidden mb-4 bg-slate-800">
-                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img 
+                    src={item.imageUrl} 
+                    alt={item.name} 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80';
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
                   <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-amber-400 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-500/30">
                     {item.supplierName}
                   </span>

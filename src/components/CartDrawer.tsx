@@ -22,9 +22,9 @@ export const CartDrawer: React.FC = () => {
   const { user } = useAuth();
 
   const [step, setStep] = useState<1 | 2>(1); // 1: Cart Items, 2: Checkout Form
-  const [address, setAddress] = useState(user?.address || 'Flat 402, Royal Palms, Sector 62');
-  const [city, setCity] = useState(user?.city || 'Delhi NCR');
-  const [pincode, setPincode] = useState(user?.pincode || '201301');
+  const [address, setAddress] = useState(user?.address || 'Lake Road, Matwari');
+  const [city, setCity] = useState(user?.city || 'Hazaribagh (Main Town)');
+  const [pincode, setPincode] = useState(user?.pincode || '825301');
   const [phone, setPhone] = useState(user?.phone || '9811223344');
   const [slot, setSlot] = useState('10:00 AM - 12:00 PM');
   const [paymentMode, setPaymentMode] = useState('Cash on Delivery');

@@ -19,9 +19,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: 'user@ghartak.com',
     fullName: 'Shubham Kumar',
     phone: '9811223344',
-    address: 'Flat 402, Royal Palms, Indirapuram',
-    city: 'Delhi NCR',
-    pincode: '201014',
+    address: 'Lake Road, Matwari',
+    city: 'Hazaribagh (Main Town)',
+    pincode: '825301',
     role: 'CUSTOMER'
   });
   const [token, setToken] = useState<string | null>('mock-jwt-token-ghartak');

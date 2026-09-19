@@ -28,7 +28,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedCity, setSelectedCity] = useState<string>('Delhi NCR');
+  const [selectedCity, setSelectedCity] = useState<string>('Hazaribagh (Main Town)');
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
   const [activeView, setActiveView] = useState<'home' | 'raw_material' | 'building_calculator' | 'partner_hub' | 'admin' | 'my_bookings'>('home');

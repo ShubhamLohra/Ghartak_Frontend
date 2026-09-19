@@ -1,9 +1,11 @@
 import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
 
-// Live Railway 24/7 High-Performance Spring Boot Backend URL
-const PRODUCTION_BACKEND_URL = 'https://ghartakbackend-production.up.railway.app/api';
+import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_BACKEND_URL;
+// Default to local Spring Boot backend on port 8080, fallback to Railway production
+const LOCAL_BACKEND_URL = 'http://localhost:8080/api';
+
+const API_BASE = import.meta.env.VITE_API_URL || LOCAL_BACKEND_URL;
 
 export const api = {
   // Auth
@@ -99,10 +101,46 @@ export const api = {
     return res.json();
   },
 
-  // Admin Stats & Reviews
+  // Admin Portal API
   async getAdminStats(): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/stats`);
     if (!res.ok) throw new Error('Failed to fetch admin stats');
+    return res.json();
+  },
+
+  async getAllAdminBookings(): Promise<Booking[]> {
+    const res = await fetch(`${API_BASE}/admin/bookings`);
+    if (!res.ok) throw new Error('Failed to fetch all bookings');
+    return res.json();
+  },
+
+  async updateAdminBookingStatus(bookingId: number, status: string, providerId?: number): Promise<Booking> {
+    let url = `${API_BASE}/admin/bookings/${bookingId}/status?status=${status}`;
+    if (providerId) url += `&providerId=${providerId}`;
+    const res = await fetch(url, { method: 'PUT' });
+    if (!res.ok) throw new Error('Failed to update status');
+    return res.json();
+  },
+
+  async getAllAdminProviders(): Promise<User[]> {
+    const res = await fetch(`${API_BASE}/admin/providers`);
+    if (!res.ok) throw new Error('Failed to fetch admin providers');
+    return res.json();
+  },
+
+  async getProvidersByService(profession: string): Promise<User[]> {
+    const res = await fetch(`${API_BASE}/admin/providers/by-service?profession=${encodeURIComponent(profession)}`);
+    if (!res.ok) throw new Error('Failed to fetch service providers');
+    return res.json();
+  },
+
+  async onboardProvider(providerData: any): Promise<User> {
+    const res = await fetch(`${API_BASE}/admin/providers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(providerData)
+    });
+    if (!res.ok) throw new Error('Failed to onboard provider');
     return res.json();
   },
 
