@@ -54,9 +54,6 @@ export const HeroBanner: React.FC<HeroProps> = ({ onSelectCategory, onSearchSubm
             “A to Z Solution in One Tap”
           </p>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto mb-8 font-medium">
-            Book verified Electricians, Carpenters, Plumbers, Building Repairs (Labour, Mistry, Contractor, Engineer), POP False Ceiling, or Order Raw Materials directly to your doorstep.
-          </p>
 
           {/* Search Box Card */}
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto relative mb-8">
