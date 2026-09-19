@@ -1,7 +1,7 @@
 import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
 
-// Live Render Spring Boot Backend URL
-const PRODUCTION_BACKEND_URL = 'https://ghartak-backend-p38q.onrender.com/api';
+// Live Railway 24/7 High-Performance Spring Boot Backend URL
+const PRODUCTION_BACKEND_URL = 'https://ghartakbackend-production.up.railway.app/api';
 
 const API_BASE = import.meta.env.VITE_API_URL || PRODUCTION_BACKEND_URL;
 
