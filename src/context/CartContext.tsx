@@ -6,6 +6,8 @@ export interface CartItem {
   quantity: number;
 }
 
+export type ActiveView = 'home' | 'raw_material' | 'building_calculator' | 'partner_hub' | 'admin' | 'my_bookings' | 'help' | 'profile';
+
 interface CartContextType {
   cart: CartItem[];
   addToCart: (service: ServiceItem) => void;
@@ -20,8 +22,8 @@ interface CartContextType {
   setIsCartOpen: (open: boolean) => void;
   activeBooking: Booking | null;
   setActiveBooking: (booking: Booking | null) => void;
-  activeView: 'home' | 'raw_material' | 'building_calculator' | 'partner_hub' | 'admin' | 'my_bookings';
-  setActiveView: (view: 'home' | 'raw_material' | 'building_calculator' | 'partner_hub' | 'admin' | 'my_bookings') => void;
+  activeView: ActiveView;
+  setActiveView: (view: ActiveView) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,7 +33,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [selectedCity, setSelectedCity] = useState<string>('Hazaribagh (Main Town)');
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
-  const [activeView, setActiveView] = useState<'home' | 'raw_material' | 'building_calculator' | 'partner_hub' | 'admin' | 'my_bookings'>('home');
+  const [activeView, setActiveView] = useState<ActiveView>('home');
 
   const addToCart = (service: ServiceItem) => {
     setCart((prev) => {

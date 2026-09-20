@@ -10,146 +10,261 @@ import {
   PhoneCall, 
   CheckCircle2, 
   ShieldCheck, 
-  Download,
-  AlertCircle
+  ChevronDown,
+  ChevronUp,
+  XCircle,
+  MessageSquare
 } from 'lucide-react';
 
 export const BookingTracker: React.FC = () => {
-  const { activeBooking, setActiveBooking } = useCart();
+  const { activeBooking, setActiveView } = useCart();
+  const [activeTab, setActiveTab] = useState<'UPCOMING' | 'COMPLETED' | 'CANCELLED'>('UPCOMING');
   const [userBookings, setUserBookings] = useState<Booking[]>([]);
+  const [expandedBookingId, setExpandedBookingId] = useState<number | null>(null);
 
   useEffect(() => {
-    api.getUserBookings(2)
+    api.getUserBookings(1)
       .then((data) => {
         setUserBookings(data);
-        if (data.length > 0 && !activeBooking) {
-          setActiveBooking(data[0]);
+        if (data.length > 0 && activeBooking) {
+          setExpandedBookingId(activeBooking.id);
         }
       })
-      .catch((err) => console.error('Failed to load user bookings', err));
-  }, []);
+      .catch((err) => {
+        console.error('Failed to load user bookings', err);
+        // Fallback default sample booking if backend unavailable
+        setUserBookings([
+          {
+            id: 101,
+            bookingCode: 'GT-482910',
+            serviceCategoryName: 'Electrician Service',
+            scheduledDate: 'Today',
+            scheduledTimeSlot: '2:00 PM – 4:00 PM',
+            address: 'House 42, Circular Road',
+            city: 'Hazaribagh',
+            pincode: '825301',
+            contactPhone: '9876543210',
+            totalAmount: 298,
+            taxesAndFee: 49,
+            paymentMethod: 'Cash on Service',
+            paymentStatus: 'PENDING',
+            status: 'PROVIDER_ASSIGNED',
+            items: [{ title: 'Switch & Socket Repair', price: 149, quantity: 1 }, { title: 'Fan Regulator Repair', price: 100, quantity: 1 }],
+            provider: {
+              id: 5,
+              email: 'rahul@ghartak.com',
+              fullName: 'Rahul Kumar',
+              phone: '9876543210',
+              role: 'SERVICE_PROVIDER',
+              profession: 'Electrician',
+              rating: 4.8,
+              completedJobs: 324
+            }
+          }
+        ]);
+      });
+  }, [activeBooking]);
 
-  const booking = activeBooking || (userBookings.length > 0 ? userBookings[0] : null);
+  const filteredBookings = userBookings.filter((b) => {
+    if (activeTab === 'UPCOMING') return b.status === 'BOOKED' || b.status === 'PROVIDER_ASSIGNED' || b.status === 'EN_ROUTE' || b.status === 'IN_PROGRESS';
+    if (activeTab === 'COMPLETED') return b.status === 'COMPLETED';
+    if (activeTab === 'CANCELLED') return b.status === 'CANCELLED';
+    return true;
+  });
 
-  if (!booking) {
-    return (
-      <div className="py-20 text-center text-slate-400 bg-[#0F0F14] min-h-[60vh] flex flex-col items-center justify-center">
-        <CalendarCheck className="w-16 h-16 text-amber-500/40 mb-3" />
-        <h3 className="text-xl font-bold text-white mb-1">No Active Bookings Found</h3>
-        <p className="text-xs text-slate-400">Book any service or hardware solution to track live progress here.</p>
-      </div>
-    );
-  }
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'BOOKED':
+        return { label: 'Confirmed', bg: 'bg-blue-100 text-blue-800' };
+      case 'PROVIDER_ASSIGNED':
+        return { label: 'Professional Assigned', bg: 'bg-indigo-100 text-indigo-800' };
+      case 'EN_ROUTE':
+        return { label: 'On the Way', bg: 'bg-amber-100 text-amber-800' };
+      case 'IN_PROGRESS':
+        return { label: 'Service in Progress', bg: 'bg-purple-100 text-purple-800' };
+      case 'COMPLETED':
+        return { label: 'Completed', bg: 'bg-emerald-100 text-emerald-800' };
+      case 'CANCELLED':
+        return { label: 'Cancelled', bg: 'bg-red-100 text-red-800' };
+      default:
+        return { label: status, bg: 'bg-slate-100 text-slate-800' };
+    }
+  };
 
-  const steps = [
-    { label: 'Booked', status: 'BOOKED', done: true },
-    { label: 'Provider Assigned', status: 'PROVIDER_ASSIGNED', done: true },
-    { label: 'On The Way', status: 'EN_ROUTE', done: booking.status === 'EN_ROUTE' || booking.status === 'IN_PROGRESS' || booking.status === 'COMPLETED' },
-    { label: 'Work In Progress', status: 'IN_PROGRESS', done: booking.status === 'IN_PROGRESS' || booking.status === 'COMPLETED' },
-    { label: 'Completed', status: 'COMPLETED', done: booking.status === 'COMPLETED' },
-  ];
+  const handleCancelBooking = (bookingId: number) => {
+    if (confirm('Are you sure you want to cancel this booking?')) {
+      setUserBookings((prev) =>
+        prev.map((b) => (b.id === bookingId ? { ...b, status: 'CANCELLED' } : b))
+      );
+    }
+  };
 
   return (
-    <section className="py-12 bg-[#0F0F14] min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Title */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Live Service Tracking</h3>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Booking #{booking.bookingCode}
-            </h2>
-          </div>
-
-          <span className="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-xs font-bold uppercase">
-            {booking.status.replace('_', ' ')}
-          </span>
-        </div>
-
-        {/* Progress Stepper Bar */}
-        <div className="glass-card rounded-3xl p-6 sm:p-8 mb-8 border border-amber-500/20">
-          <div className="grid grid-cols-5 gap-2 relative">
-            {steps.map((st, idx) => (
-              <div key={st.label} className="flex flex-col items-center text-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs mb-2 transition-all ${st.done ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/30' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>
-                  {st.done ? <CheckCircle2 className="w-5 h-5 stroke-[2.5]" /> : idx + 1}
-                </div>
-                <span className={`text-[10px] sm:text-xs font-bold ${st.done ? 'text-amber-300' : 'text-slate-500'}`}>
-                  {st.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Booking Details & Assigned Provider Card */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Assigned Technician / Provider Card */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              <span>Assigned Ghar Tak Technician</span>
-            </h3>
-
-            {booking.provider ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-500 text-amber-400 font-extrabold text-xl flex items-center justify-center">
-                    {booking.provider.fullName.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="text-base font-bold text-white">{booking.provider.fullName}</h4>
-                    <p className="text-xs text-slate-400">{booking.provider.profession || 'Verified Specialist'}</p>
-                    <p className="text-xs text-amber-400 font-bold mt-1">★ {booking.provider.rating || '4.9'} Star Partner</p>
-                  </div>
-                </div>
-
-                <a
-                  href={`tel:${booking.provider.phone}`}
-                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-black font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
-                >
-                  <PhoneCall className="w-4 h-4" />
-                  <span>Call Partner ({booking.provider.phone})</span>
-                </a>
-              </div>
-            ) : (
-              <div className="p-4 rounded-xl bg-[#1A1A28] border border-slate-800 text-slate-300 text-xs">
-                Auto-allocating nearest verified technician in your pincode area...
-              </div>
-            )}
-          </div>
-
-          {/* Job Summary & Address Card */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              <span>Service Location & Scheduled Slot</span>
-            </h3>
-
-            <div className="text-xs space-y-2 text-slate-300">
-              <p><span className="text-slate-500 font-semibold">Category:</span> <span className="font-bold text-white">{booking.serviceCategoryName}</span></p>
-              <p><span className="text-slate-500 font-semibold">Time Slot:</span> <span className="font-bold text-amber-300">{booking.scheduledTimeSlot}</span></p>
-              <p><span className="text-slate-500 font-semibold">Address:</span> {booking.address}, {booking.city} - {booking.pincode}</p>
-              <p><span className="text-slate-500 font-semibold">Total Paid:</span> <span className="font-bold text-gold-gradient text-sm">₹{booking.totalAmount} ({booking.paymentMethod})</span></p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-              <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-emerald-400" /> Ghar Tak Shield Protected</span>
-              <button onClick={() => alert(`Invoice downloaded for Booking #${booking.bookingCode}`)} className="text-amber-400 font-bold hover:underline flex items-center gap-1">
-                <Download className="w-3.5 h-3.5" />
-                <span>Invoice</span>
-              </button>
-            </div>
-          </div>
-
-        </div>
-
+    <div className="max-w-4xl mx-auto px-4 py-8 mb-24">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Your Bookings</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">Track live status of your home service requests</p>
       </div>
-    </section>
+
+      {/* Navigation Filter Tabs */}
+      <div className="flex border-b border-slate-200 mb-6 gap-6">
+        {[
+          { key: 'UPCOMING', label: 'Upcoming' },
+          { key: 'COMPLETED', label: 'Completed' },
+          { key: 'CANCELLED', label: 'Cancelled' }
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as any)}
+            className={`pb-3 text-sm font-semibold transition-colors border-b-2 -mb-px tap-target ${
+              activeTab === tab.key
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Bookings List or Empty State */}
+      {filteredBookings.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-xs">
+          <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CalendarCheck className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900">No bookings yet</h3>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 mb-6">Your upcoming services will appear here.</p>
+          <button
+            onClick={() => setActiveView('home')}
+            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm rounded-xl transition-colors shadow-sm tap-target"
+          >
+            Book a service
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredBookings.map((b) => {
+            const badge = getStatusBadge(b.status);
+            const isExpanded = expandedBookingId === b.id;
+
+            return (
+              <div key={b.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all">
+                
+                {/* Header Row */}
+                <div className="flex flex-wrap items-start justify-between gap-2 mb-3 pb-3 border-b border-slate-100">
+                  <div>
+                    <span className="text-[11px] font-mono text-slate-400">ID: #{b.bookingCode}</span>
+                    <h3 className="text-base font-bold text-slate-900 mt-0.5">{b.serviceCategoryName}</h3>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.bg}`}>
+                    {badge.label}
+                  </span>
+                </div>
+
+                {/* Details Summary */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-600 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                    <span>{b.scheduledDate}, {b.scheduledTimeSlot}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                    <span className="truncate">{b.address}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-slate-900 text-sm">Total: ₹{b.totalAmount}</span>
+                  </div>
+                </div>
+
+                {/* Assigned Professional Card */}
+                {b.provider && (
+                  <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs">
+                        {b.provider.fullName.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="font-bold text-xs text-slate-900">{b.provider.fullName}</h4>
+                          <span className="text-[10px] text-emerald-700 bg-emerald-100 font-semibold px-1.5 py-0.2 rounded">✓ Verified</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">{b.provider.profession || 'Professional'} • ★ {b.provider.rating || 4.8} ({b.provider.completedJobs || 300}+ jobs)</p>
+                      </div>
+                    </div>
+                    <a
+                      href={`tel:${b.provider.phone}`}
+                      className="p-2 bg-white hover:bg-slate-100 border border-slate-200 text-indigo-600 rounded-lg text-xs font-semibold flex items-center gap-1"
+                    >
+                      <PhoneCall className="w-3.5 h-3.5" /> Call
+                    </a>
+                  </div>
+                )}
+
+                {/* Stepper Timeline when expanded */}
+                {isExpanded && (
+                  <div className="my-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-3">
+                    <h4 className="text-xs font-bold text-indigo-900 uppercase tracking-wider">Live Status Tracker</h4>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center gap-2 text-emerald-700 font-semibold">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Booking Confirmed & Received</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-emerald-700 font-semibold">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Professional Assigned ({b.provider?.fullName || 'Rahul Kumar'})</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <div className="w-4 h-4 rounded-full border-2 border-slate-300"></div>
+                        <span>On the way to your location</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500">
+                        <div className="w-4 h-4 rounded-full border-2 border-slate-300"></div>
+                        <span>Service completion & payment</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Card Actions */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                  <button
+                    onClick={() => setExpandedBookingId(isExpanded ? null : b.id)}
+                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                  >
+                    {isExpanded ? (
+                      <>Hide Tracking <ChevronUp className="w-4 h-4" /></>
+                    ) : (
+                      <>Track Booking <ChevronDown className="w-4 h-4" /></>
+                    )}
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {b.status !== 'COMPLETED' && b.status !== 'CANCELLED' && (
+                      <button
+                        onClick={() => handleCancelBooking(b.id)}
+                        className="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 border border-red-200 rounded-lg font-medium transition-colors"
+                      >
+                        Cancel Booking
+                      </button>
+                    )}
+                    <a
+                      href="https://wa.me/919999999999?text=Support%20needed%20for%20Booking%20GT-482910"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors"
+                    >
+                      Contact Support
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 };

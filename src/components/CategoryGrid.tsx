@@ -10,11 +10,18 @@ import {
   Package, 
   Droplet, 
   Sparkles, 
-  Layout, 
-  Activity, 
-  ArrowRight,
-  Star
+  RotateCcw,
+  CheckCircle2,
+  ShieldCheck,
+  Clock,
+  ThumbsUp,
+  ChevronRight,
+  Sparkle,
+  Bug,
+  HomeIcon,
+  CalendarCheck
 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 interface CategoryGridProps {
   categories: ServiceCategory[];
@@ -22,111 +29,188 @@ interface CategoryGridProps {
 }
 
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onSelectCategory }) => {
-  const getCategoryStyle = (code: string) => {
+  const { setActiveView } = useCart();
+
+  const getCategoryIcon = (code: string) => {
     switch (code) {
-      case 'ELECTRIC': 
-        return { icon: <Zap className="w-6 h-6 text-amber-400 stroke-[2.2]" />, bg: 'bg-amber-500/10 border-amber-500/30' };
-      case 'CARPENTER': 
-        return { icon: <Hammer className="w-6 h-6 text-orange-400 stroke-[2.2]" />, bg: 'bg-orange-500/10 border-orange-500/30' };
-      case 'VEHICLE_REPAIR': 
-        return { icon: <Wrench className="w-6 h-6 text-yellow-400 stroke-[2.2]" />, bg: 'bg-yellow-500/10 border-yellow-500/30' };
-      case 'PAINT': 
-        return { icon: <Paintbrush className="w-6 h-6 text-rose-400 stroke-[2.2]" />, bg: 'bg-rose-500/10 border-rose-500/30' };
-      case 'BUILDING_REPAIR': 
-        return { icon: <Building2 className="w-6 h-6 text-indigo-400 stroke-[2.2]" />, bg: 'bg-indigo-500/10 border-indigo-500/30' };
-      case 'CCTV_COMPUTER': 
-        return { icon: <Camera className="w-6 h-6 text-cyan-400 stroke-[2.2]" />, bg: 'bg-cyan-500/10 border-cyan-500/30' };
-      case 'RAW_MATERIAL': 
-        return { icon: <Package className="w-6 h-6 text-emerald-400 stroke-[2.2]" />, bg: 'bg-emerald-500/10 border-emerald-500/30' };
-      case 'PLUMBER': 
-        return { icon: <Droplet className="w-6 h-6 text-sky-400 stroke-[2.2]" />, bg: 'bg-sky-500/10 border-sky-500/30' };
-      case 'WASHROOM_CLEANING': 
-        return { icon: <Sparkles className="w-6 h-6 text-teal-400 stroke-[2.2]" />, bg: 'bg-teal-500/10 border-teal-500/30' };
-      case 'FALSE_CEILING': 
-        return { icon: <Layout className="w-6 h-6 text-purple-400 stroke-[2.2]" />, bg: 'bg-purple-500/10 border-purple-500/30' };
-      case 'DIAGNOSTIC': 
-        return { icon: <Activity className="w-6 h-6 text-pink-400 stroke-[2.2]" />, bg: 'bg-pink-500/10 border-pink-500/30' };
-      default: 
-        return { icon: <Wrench className="w-6 h-6 text-indigo-400 stroke-[2.2]" />, bg: 'bg-indigo-500/10 border-indigo-500/30' };
+      case 'ELECTRIC':
+        return <Zap className="w-7 h-7 text-amber-500" />;
+      case 'WASHROOM_CLEANING':
+      case 'CLEANING':
+        return <Sparkles className="w-7 h-7 text-indigo-500" />;
+      case 'PLUMBER':
+        return <Droplet className="w-7 h-7 text-sky-500" />;
+      case 'CARPENTER':
+        return <Hammer className="w-7 h-7 text-orange-500" />;
+      case 'APPLIANCE':
+      case 'VEHICLE_REPAIR':
+        return <Wrench className="w-7 h-7 text-purple-500" />;
+      case 'PAINT':
+        return <Paintbrush className="w-7 h-7 text-rose-500" />;
+      case 'PEST_CONTROL':
+        return <Bug className="w-7 h-7 text-emerald-500" />;
+      case 'BUILDING_REPAIR':
+        return <Building2 className="w-7 h-7 text-blue-600" />;
+      case 'RAW_MATERIAL':
+        return <Package className="w-7 h-7 text-teal-600" />;
+      default:
+        return <Wrench className="w-7 h-7 text-indigo-600" />;
     }
   };
 
-  return (
-    <section className="py-16 bg-[#090D16]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-slate-800/80">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
-              <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest">A to Z Solutions in One Tap</h3>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Explore Home Services & Hardware Categories
-            </h2>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2 md:mt-0 font-medium">
-            Select a service to view upfront rates, technician availability & instant booking
-          </p>
-        </div>
+  const sampleRecentBookings = [
+    { id: 1, name: 'Switch & Socket Repair', categoryCode: 'ELECTRIC', price: 149, date: 'Booked 2 weeks ago' },
+    { id: 2, name: 'Bathroom Deep Cleaning', categoryCode: 'WASHROOM_CLEANING', price: 499, date: 'Booked 1 month ago' }
+  ];
 
-        {/* 11 Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {categories.map((cat) => {
-            const style = getCategoryStyle(cat.code);
-            return (
-              <div
+  return (
+    <div className="py-10 bg-slate-50 mb-20">
+      <div className="max-w-5xl mx-auto px-4">
+        
+        {/* Section 1: Popular Services */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Popular Services</h2>
+              <p className="text-xs sm:text-sm text-slate-600">Select a category to book a verified professional</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categories.map((cat) => (
+              <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat)}
-                className="rounded-2xl p-6 cursor-pointer relative group flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 border border-slate-800 hover:border-indigo-500/60 hover:shadow-[0_16px_40px_rgba(99,102,241,0.2)] bg-[#151D2A]"
+                className="consumer-card-interactive p-4 sm:p-5 text-left flex flex-col justify-between group tap-target"
               >
-                {/* Subtle top accent border */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-indigo-400 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl" />
-
+                <div className="p-3 bg-slate-100 group-hover:bg-indigo-50 rounded-2xl w-fit mb-3 transition-colors">
+                  {getCategoryIcon(cat.code)}
+                </div>
                 <div>
-                  {/* Header Row */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3.5 rounded-2xl border ${style.bg} transition-all duration-300 shadow-md`}>
-                      {style.icon}
-                    </div>
-                    
-                    {cat.badgeText && (
-                      <span className="text-[10px] font-black bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                        {cat.badgeText}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Category Name */}
-                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 group-hover:text-indigo-600 transition-colors">
                     {cat.name}
                   </h3>
-
-                  {/* Description */}
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-5 font-medium">
-                    {cat.description}
+                  <p className="text-xs text-slate-500 mt-1 line-clamp-1">
+                    Starting @ ₹{cat.services && cat.services.length > 0 ? cat.services[0].price : 149}
                   </p>
                 </div>
+              </button>
+            ))}
 
-                {/* Rating & Arrow Footer */}
-                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span className="text-xs font-bold text-slate-200">4.8</span>
-                    <span className="text-[11px] text-slate-400">({cat.services ? cat.services.length : 4}+ options)</span>
-                  </div>
-                  <span className="flex items-center gap-1 text-xs font-black text-indigo-400 group-hover:translate-x-1 transition-transform">
-                    Explore
-                    <ArrowRight className="w-4 h-4 stroke-[3]" />
-                  </span>
-                </div>
+            {/* Specialized Building Calculator Card */}
+            <button
+              onClick={() => setActiveView('building_calculator')}
+              className="consumer-card-interactive p-4 sm:p-5 text-left flex flex-col justify-between group bg-gradient-to-br from-indigo-50/50 to-amber-50/50 border-indigo-200"
+            >
+              <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl w-fit mb-3">
+                <Building2 className="w-7 h-7" />
               </div>
-            );
-          })}
+              <div>
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 group-hover:text-indigo-600">
+                  Building & Repair Calculator
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">Estimate construction & repair costs</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Section 2: Book Again */}
+        <div className="mb-12">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <RotateCcw className="w-5 h-5 text-indigo-600" />
+            Book Again
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {sampleRecentBookings.map((b) => {
+              const matchedCat = categories.find((c) => c.code === b.categoryCode) || categories[0];
+              return (
+                <div key={b.id} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center justify-between shadow-xs">
+                  <div>
+                    <h4 className="font-semibold text-sm text-slate-900">{b.name}</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">{b.date} • ₹{b.price}</p>
+                  </div>
+                  <button
+                    onClick={() => onSelectCategory(matchedCat)}
+                    className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-xl transition-colors tap-target"
+                  >
+                    Book again
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Section 3: How Ghartak Works */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 mb-12 shadow-xs">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 text-center mb-6">
+            How Ghartak Works
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-lg mb-3">
+                1
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base">Choose a service</h3>
+              <p className="text-xs text-slate-600 mt-1">Select from electrical, plumbing, cleaning, or repairs.</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-lg mb-3">
+                2
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base">Pick a time</h3>
+              <p className="text-xs text-slate-600 mt-1">Select a convenient date and 2-hour time slot.</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-lg mb-3">
+                3
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base">A professional comes</h3>
+              <p className="text-xs text-slate-600 mt-1">A verified professional arrives at your doorstep.</p>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Section 4: Why Choose Ghartak? */}
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4 text-center sm:text-left">
+            Why choose Ghartak?
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            
+            <div className="bg-white p-4 rounded-xl border border-slate-200 text-center sm:text-left">
+              <ShieldCheck className="w-6 h-6 text-indigo-600 mx-auto sm:mx-0 mb-2" />
+              <h3 className="font-semibold text-xs sm:text-sm text-slate-900">Verified professionals</h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">Background checked</p>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200 text-center sm:text-left">
+              <ThumbsUp className="w-6 h-6 text-emerald-600 mx-auto sm:mx-0 mb-2" />
+              <h3 className="font-semibold text-xs sm:text-sm text-slate-900">Transparent pricing</h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">No hidden surprises</p>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200 text-center sm:text-left">
+              <CalendarCheck className="w-6 h-6 text-amber-500 mx-auto sm:mx-0 mb-2" />
+              <h3 className="font-semibold text-xs sm:text-sm text-slate-900">Easy booking</h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">Book in under 1 min</p>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-slate-200 text-center sm:text-left">
+              <HomeIcon className="w-6 h-6 text-purple-600 mx-auto sm:mx-0 mb-2" />
+              <h3 className="font-semibold text-xs sm:text-sm text-slate-900">At your doorstep</h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">Hassle-free service</p>
+            </div>
+
+          </div>
         </div>
 
       </div>
-    </section>
+    </div>
   );
 };

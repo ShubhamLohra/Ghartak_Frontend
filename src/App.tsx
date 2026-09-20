@@ -13,11 +13,12 @@ import { BookingTracker } from './components/BookingTracker';
 import { PartnerLeadHub } from './components/PartnerLeadHub';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthModal } from './components/AuthModal';
+import { HelpSection } from './components/HelpSection';
+import { ProfileSection } from './components/ProfileSection';
 import { Footer } from './components/Footer';
-import { ServiceCategory, ServiceItem } from './types';
+import { ServiceCategory } from './types';
 import { api } from './services/api';
 
-// Ghar Tak - "A to Z Solution in One Tap" - Production Deployment
 const AppContent: React.FC = () => {
   const { activeView } = useCart();
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
@@ -42,8 +43,8 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0F0F14] text-white selection:bg-amber-500 selection:text-black">
-      {/* Navigation Header */}
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white">
+      {/* Navigation Header & Bottom Bar */}
       <Navbar onSearch={handleSearch} />
 
       {/* Main Content Views */}
@@ -55,20 +56,11 @@ const AppContent: React.FC = () => {
               onSearchSubmit={handleSearch}
             />
 
-            {/* Core Categories Grid (11 Services) */}
+            {/* Core Categories Grid & Sections */}
             <CategoryGrid
               categories={categories}
               onSelectCategory={(cat) => setSelectedCategory(cat)}
             />
-
-            {/* Specialized Building Repair Component */}
-            <BuildingRepairCalculator />
-
-            {/* Raw Material Supply Store */}
-            <RawMaterialMarketplace />
-
-            {/* Diagnostic Services Section */}
-            <DiagnosticServicesSection />
           </>
         )}
 
@@ -77,6 +69,8 @@ const AppContent: React.FC = () => {
         {activeView === 'partner_hub' && <PartnerLeadHub />}
         {activeView === 'admin' && <AdminDashboard />}
         {activeView === 'my_bookings' && <BookingTracker />}
+        {activeView === 'help' && <HelpSection />}
+        {activeView === 'profile' && <ProfileSection />}
       </main>
 
       {/* Interactive Service Detail Modal */}
