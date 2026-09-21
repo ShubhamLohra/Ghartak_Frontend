@@ -14,6 +14,7 @@ export interface User {
   completedJobs?: number;
   totalEarnings?: number;
   dailyLeadsRemaining?: number;
+  createdAt?: string;
 }
 
 export interface ServiceItem {
@@ -40,6 +41,9 @@ export interface ServiceCategory {
   badgeText: string;
   categoryGroup: string;
   bgGradient: string;
+  baseCharge?: number;
+  commissionRate?: number;
+  commissionType?: 'PERCENTAGE' | 'FIXED';
   services: ServiceItem[];
 }
 
@@ -65,11 +69,26 @@ export interface Booking {
   instructions?: string;
   totalAmount: number;
   taxesAndFee: number;
+  commissionAmount?: number;
+  providerPayout?: number;
   paymentMethod: string;
   paymentStatus: string;
+  cancelStage?: string;
+  cancellationReason?: string;
+  cancelledBy?: string;
   status: 'BOOKED' | 'PROVIDER_ASSIGNED' | 'EN_ROUTE' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   items: BookingItem[];
   createdAt?: string;
+}
+
+export interface AdminNotification {
+  id: number;
+  title: string;
+  message: string;
+  type: string;
+  isRead: boolean;
+  bookingId?: number;
+  createdAt: string;
 }
 
 export interface RawMaterialProduct {

@@ -1,10 +1,6 @@
-import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
+import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User, AdminNotification } from '../types';
 
-import { ServiceCategory, ServiceItem, Booking, RawMaterialProduct, ServiceLead, Review, User } from '../types';
-
-// Default to local Spring Boot backend on port 8080, fallback to Railway production
 const LOCAL_BACKEND_URL = 'http://localhost:8080/api';
-
 const API_BASE = import.meta.env.VITE_API_URL || LOCAL_BACKEND_URL;
 
 export const api = {
@@ -108,6 +104,24 @@ export const api = {
     return res.json();
   },
 
+  async getFinancialAnalytics(range: string = 'MONTHLY'): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/analytics?range=${range}`);
+    if (!res.ok) throw new Error('Failed to fetch analytics');
+    return res.json();
+  },
+
+  async getLeastBookedInsights(): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/least-booked`);
+    if (!res.ok) throw new Error('Failed to fetch least booked insights');
+    return res.json();
+  },
+
+  async getCancellationAnalysis(): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/cancellations`);
+    if (!res.ok) throw new Error('Failed to fetch cancellation analysis');
+    return res.json();
+  },
+
   async getAllAdminBookings(): Promise<Booking[]> {
     const res = await fetch(`${API_BASE}/admin/bookings`);
     if (!res.ok) throw new Error('Failed to fetch all bookings');
@@ -119,6 +133,14 @@ export const api = {
     if (providerId) url += `&providerId=${providerId}`;
     const res = await fetch(url, { method: 'PUT' });
     if (!res.ok) throw new Error('Failed to update status');
+    return res.json();
+  },
+
+  async reassignBooking(bookingId: number, newProviderId: number, reason?: string): Promise<Booking> {
+    let url = `${API_BASE}/admin/bookings/${bookingId}/reassign?newProviderId=${newProviderId}`;
+    if (reason) url += `&reason=${encodeURIComponent(reason)}`;
+    const res = await fetch(url, { method: 'PUT' });
+    if (!res.ok) throw new Error('Failed to reassign booking');
     return res.json();
   },
 
@@ -142,6 +164,26 @@ export const api = {
     });
     if (!res.ok) throw new Error('Failed to onboard provider');
     return res.json();
+  },
+
+  async saveCategory(categoryData: any): Promise<ServiceCategory> {
+    const res = await fetch(`${API_BASE}/admin/categories`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(categoryData)
+    });
+    if (!res.ok) throw new Error('Failed to save category');
+    return res.json();
+  },
+
+  async getAdminNotifications(): Promise<AdminNotification[]> {
+    const res = await fetch(`${API_BASE}/admin/notifications`);
+    if (!res.ok) throw new Error('Failed to fetch notifications');
+    return res.json();
+  },
+
+  async markNotificationRead(id: number): Promise<void> {
+    await fetch(`${API_BASE}/admin/notifications/${id}/read`, { method: 'PUT' });
   },
 
   async getReviews(): Promise<Review[]> {
