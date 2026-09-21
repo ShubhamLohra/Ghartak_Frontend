@@ -1,100 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
   <defs>
-    <linearGradient id="indigoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6366F1" />
-      <stop offset="50%" stop-color="#4F46E5" />
-      <stop offset="100%" stop-color="#3730A3" />
-    </linearGradient>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FDE047" />
-      <stop offset="50%" stop-color="#F59E0B" />
-      <stop offset="100%" stop-color="#D97706" />
-    </linearGradient>
-    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#4F46E5" />
       <stop offset="100%" stop-color="#3730A3" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4F46E5" flood-opacity="0.3"/>
     </filter>
   </defs>
 
-  <!-- Background Circle in Website Brand Indigo -->
-  <circle cx="250" cy="250" r="230" fill="url(#indigoGrad)" stroke="#F59E0B" stroke-width="10" filter="url(#glow)"/>
-  <circle cx="250" cy="250" r="218" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.4"/>
+  <!-- Outer Rounded Shield Circle -->
+  <rect x="10" y="10" width="180" height="180" rx="48" fill="url(#bgGrad)" filter="url(#softShadow)"/>
+  
+  <!-- Subtle Inner Border -->
+  <rect x="16" y="16" width="168" height="168" rx="42" fill="none" stroke="#F59E0B" stroke-width="4" opacity="0.7"/>
 
-  <!-- Top House Roof Emblem -->
-  <path d="M 130 155 L 250 80 L 370 155 L 350 170 L 250 108 L 150 170 Z" fill="url(#goldGrad)" />
-  <!-- Chimney -->
-  <rect x="310" y="100" width="18" height="32" fill="url(#goldGrad)" />
-  <!-- 4-Pane Window on Roof -->
-  <g fill="url(#goldGrad)" transform="translate(235, 120)">
-    <rect x="0" y="0" width="12" height="12" rx="2" />
-    <rect x="15" y="0" width="12" height="12" rx="2" />
-    <rect x="0" y="15" width="12" height="12" rx="2" />
-    <rect x="15" y="15" width="12" height="12" rx="2" />
-  </g>
+  <!-- Modern House Roof Peak -->
+  <path d="M 45 95 L 100 48 L 155 95" fill="none" stroke="url(#amberGrad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
 
-  <!-- Main Title: GharTak -->
-  <g transform="translate(60, 235)">
-    <!-- Letter G with roof cut -->
-    <path d="M 55 5 C 20 5 0 25 0 60 C 0 95 20 115 55 115 C 80 115 95 100 95 75 L 55 75 L 55 55 L 115 55 L 115 80 C 115 115 90 135 55 135 C 10 135 -20 100 -20 60 C -20 20 10 -15 55 -15 C 75 -15 95 -5 105 10 L 85 25 C 78 12 68 5 55 5 Z" fill="#FFFFFF" transform="scale(0.55)"/>
-    <!-- House inside G -->
-    <path d="M 22 25 L 34 16 L 46 25 L 46 42 L 22 42 Z" fill="#FFFFFF" />
-    <rect x="30" y="22" width="8" height="8" fill="#4F46E5"/>
+  <!-- Chimney Accent -->
+  <path d="M 132 72 L 132 58 L 144 58 L 144 82" fill="url(#amberGrad)" />
 
-    <!-- Text: har -->
-    <text x="56" y="42" font-family="'Outfit', 'Inter', sans-serif" font-weight="900" font-size="52" fill="#FFFFFF">har</text>
+  <!-- Main Stylized 'G' & Door Structure -->
+  <path d="M 68 112 C 68 98 80 88 100 88 C 120 88 132 98 132 112 C 132 135 100 152 100 152 C 100 152 68 135 68 112 Z" fill="#FFFFFF" />
 
-    <!-- Text: Tak -->
-    <text x="135" y="42" font-family="'Outfit', 'Inter', sans-serif" font-weight="900" font-size="64" fill="url(#goldGrad)">Tak</text>
-  </g>
-
-  <!-- Smartphone & Tap Gesture -->
-  <g transform="translate(365, 150)" stroke="url(#goldGrad)" stroke-width="4" fill="none">
-    <rect x="0" y="0" width="45" height="75" rx="8" />
-    <!-- Tap Hand Icon -->
-    <path d="M 20 30 C 20 20 28 20 28 35 M 28 35 L 35 28 C 38 25 43 28 40 33 L 32 45 M 20 30 L 12 38 C 10 40 10 44 14 46 L 25 58" fill="url(#goldGrad)" stroke="none"/>
-    <circle cx="22" cy="18" r="8" stroke="#F59E0B" stroke-width="2"/>
-  </g>
-
-  <!-- HARDWARE APP Badge -->
-  <line x1="80" y1="262" x2="140" y2="262" stroke="#F59E0B" stroke-width="3" />
-  <text x="250" y="268" font-family="'Outfit', 'Inter', sans-serif" font-weight="800" font-size="20" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">HOME SERVICES APP</text>
-  <line x1="360" y1="262" x2="420" y2="262" stroke="#F59E0B" stroke-width="3" />
-
-  <!-- Tagline Pill: A to Z Solution in One Tap -->
-  <rect x="95" y="285" width="310" height="38" rx="19" fill="url(#goldGrad)" />
-  <text x="250" y="311" font-family="'Outfit', 'Inter', sans-serif" font-weight="900" font-size="18" fill="#0F172A" text-anchor="middle" letter-spacing="0.5">A to Z Solution in One Tap</text>
-
-  <!-- Service Category Icons Row -->
-  <g transform="translate(80, 350)" fill="#FFFFFF" font-family="'Inter', sans-serif" font-size="10" font-weight="700">
-    <!-- Tools -->
-    <g transform="translate(0, 0)">
-      <path d="M 12 2 L 18 8 L 8 18 L 2 12 Z M 16 10 L 26 20 L 22 24 L 12 14 Z" />
-      <text x="13" y="38" fill="#E2E8F0" text-anchor="middle">TOOLS</text>
-    </g>
-    <!-- Fasteners -->
-    <g transform="translate(60, 0)">
-      <path d="M 5 2 L 20 2 L 18 7 L 7 7 Z M 10 7 L 15 7 L 15 22 L 10 22 Z M 7 12 L 18 12 M 7 17 L 18 17" stroke="#FFFFFF" stroke-width="2"/>
-      <text x="13" y="38" fill="#E2E8F0" text-anchor="middle">REPAIRS</text>
-    </g>
-    <!-- Paints -->
-    <g transform="translate(130, 0)">
-      <rect x="2" y="5" width="16" height="18" rx="2"/>
-      <path d="M 2 5 C 8 0 16 0 20 5 L 18 12 Z"/>
-      <text x="13" y="38" fill="#E2E8F0" text-anchor="middle">PAINTS</text>
-    </g>
-    <!-- Electrical -->
-    <g transform="translate(200, 0)">
-      <path d="M 8 2 L 8 10 M 16 2 L 16 10 M 4 10 L 20 10 L 17 20 L 7 20 Z M 12 20 L 12 26" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
-      <text x="13" y="38" fill="#E2E8F0" text-anchor="middle">ELECTRIC</text>
-    </g>
-    <!-- Plumbing -->
-    <g transform="translate(270, 0)">
-      <path d="M 2 10 L 14 10 L 14 4 L 20 4 L 20 10 L 24 10 M 17 14 C 17 18 14 22 17 22 C 20 22 17 18 17 14 Z" stroke="#FFFFFF" stroke-width="2" fill="none"/>
-      <text x="13" y="38" fill="#E2E8F0" text-anchor="middle">PLUMBING</text>
-    </g>
-  </g>
+  <!-- Inner Sparkle / Check Mark in Door -->
+  <path d="M 90 114 L 97 121 L 112 104" fill="none" stroke="#4F46E5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

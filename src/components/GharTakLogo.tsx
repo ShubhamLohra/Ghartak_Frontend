@@ -10,32 +10,33 @@ export const GharTakLogo: React.FC<LogoProps> = ({ size = 'md', showBadge = true
     sm: 'h-8 w-8',
     md: 'h-11 w-11',
     lg: 'h-16 w-16',
-    xl: 'h-28 w-28'
+    xl: 'h-24 w-24'
   }[size];
 
   return (
-    <div className="flex items-center gap-2.5 group cursor-pointer select-none">
-      <div className={`relative ${dimensions} transition-all duration-300 group-hover:scale-105 group-hover:rotate-1`}>
-        {/* Glow halo in Website Brand Indigo */}
-        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-md group-hover:bg-indigo-600/30 transition-all duration-300"></div>
+    <div className="flex items-center gap-3 group cursor-pointer select-none">
+      {/* Icon Mark */}
+      <div className={`relative ${dimensions} shrink-0 transition-transform duration-200 group-hover:scale-105`}>
         <img
           src="/logo.svg"
-          alt="Ghar Tak Logo"
-          className="relative z-10 w-full h-full drop-shadow-[0_4px_14px_rgba(79,70,229,0.3)]"
+          alt="Ghar Tak Icon"
+          className="w-full h-full object-contain drop-shadow-sm"
         />
       </div>
 
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="font-extrabold text-2xl tracking-tight text-slate-900 font-sans">
-            Ghar<span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-indigo-500 to-amber-500 font-black">Tak</span>
+      {/* Brand Text */}
+      <div className="flex flex-col justify-center">
+        <div className="flex items-center gap-2 leading-none">
+          <span className="font-black text-2xl tracking-tight font-sans text-slate-900">
+            Ghar<span className="text-indigo-600">Tak</span>
           </span>
-          <span className="text-[9px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold tracking-widest uppercase shadow-xs">
-            A to Z APP
+          <span className="text-[10px] bg-indigo-600 text-white px-2.5 py-0.5 rounded-full font-bold tracking-wider uppercase shadow-xs">
+            A TO Z APP
           </span>
         </div>
+
         {showBadge && (
-          <p className="text-[11px] text-indigo-600 font-semibold tracking-wide flex items-center gap-1.5 mt-0.5">
+          <p className="text-[11px] text-indigo-600 font-semibold tracking-wide flex items-center gap-1.5 mt-1">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
