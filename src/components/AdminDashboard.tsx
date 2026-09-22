@@ -340,13 +340,13 @@ export const AdminDashboard: React.FC = () => {
       await api.onboardProvider({
         ...newPartner,
         password: 'worker123',
-        rating: 4.9,
+        rating: 0.0,
         completedJobs: 0,
         totalEarnings: 0.0,
         dailyLeadsRemaining: 3
       });
       setIsOnboardModalOpen(false);
-      setNewPartner({ fullName: '', email: '', phone: '', profession: 'Electrician Services', city: 'Hazaribagh (Main Town)', address: '' });
+      setNewPartner({ fullName: '', email: '', phone: '', profession: 'Electrician Services', city: 'Hazaribagh', address: '' });
       loadAdminData();
       showToast(`Partner ${newPartner.fullName} onboarded successfully!`);
     } catch (err) {
@@ -711,13 +711,17 @@ export const AdminDashboard: React.FC = () => {
                   <div key={p.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl shadow-xs space-y-2 text-xs">
                     <div className="flex items-center justify-between">
                       <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{p.fullName}</h4>
-                      <span className="text-amber-500 font-bold">★ {p.rating || 4.9}</span>
+                      <span className={`font-bold ${p.rating && p.rating > 0 ? 'text-amber-500' : 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded-full text-[10px]'}`}>
+                        {p.rating && p.rating > 0 ? `★ ${p.rating}` : '★ New Partner'}
+                      </span>
                     </div>
                     <p className="text-indigo-600 dark:text-indigo-400 font-semibold">{p.profession || 'Service Provider'}</p>
-                    <p className="text-slate-500 dark:text-slate-400">📍 {p.city || 'Hazaribagh'} • 📞 {p.phone}</p>
+                    <p className="text-slate-500 dark:text-slate-400">
+                      📍 {p.city || 'Hazaribagh'} {p.address ? `(${p.address})` : ''} • 📞 {p.phone}
+                    </p>
                     <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-slate-700 dark:text-slate-300">
-                      <span>Jobs: <strong className="text-slate-900 dark:text-slate-100 font-bold">{p.completedJobs || 120}</strong></span>
-                      <span>Net Payout: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{((p.totalEarnings || 45000) * 0.85).toLocaleString('en-IN')}</strong></span>
+                      <span>Jobs: <strong className="text-slate-900 dark:text-slate-100 font-bold">{p.completedJobs ?? 0}</strong></span>
+                      <span>Net Payout: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{((p.totalEarnings ?? 0) * 0.85).toLocaleString('en-IN')}</strong></span>
                     </div>
                   </div>
                 ))}
@@ -867,27 +871,57 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Phone</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Phone *</label>
                   <input
                     type="text"
                     required
+                    placeholder="e.g. 9876543210"
                     value={newPartner.phone}
                     onChange={e => setNewPartner({ ...newPartner, phone: e.target.value })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Profession</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Profession *</label>
                   <select
                     value={newPartner.profession}
                     onChange={e => setNewPartner({ ...newPartner, profession: e.target.value })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   >
-                    <option value="Electrician Services">Electrician Services</option>
-                    <option value="Plumbing Services">Plumbing Services</option>
-                    <option value="Carpenter Services">Carpenter Services</option>
-                    <option value="Laundry & Dry Cleaning">Laundry & Dry Cleaning</option>
+                    {categories.length > 0 ? categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    )) : (
+                      <>
+                        <option value="Electrician Services">Electrician Services</option>
+                        <option value="Plumbing Services">Plumbing Services</option>
+                        <option value="Carpenter Services">Carpenter Services</option>
+                        <option value="Laundry & Dry Cleaning">Laundry & Dry Cleaning</option>
+                      </>
+                    )}
                   </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">City / Town *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Hazaribagh"
+                    value={newPartner.city}
+                    onChange={e => setNewPartner({ ...newPartner, city: e.target.value })}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Area / Address</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Korrah Chowk"
+                    value={newPartner.address}
+                    onChange={e => setNewPartner({ ...newPartner, address: e.target.value })}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
+                  />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
