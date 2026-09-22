@@ -27,8 +27,8 @@ export const GharTakLogo: React.FC<LogoProps> = ({ size = 'md', showBadge = true
       {/* Brand Text */}
       <div className="flex flex-col justify-center">
         <div className="flex items-center gap-2 leading-none">
-          <span className="font-black text-2xl tracking-tight font-sans text-slate-900">
-            Ghar<span className="text-indigo-600">Tak</span>
+          <span className="font-black text-2xl tracking-tight font-sans text-slate-900 dark:text-slate-100">
+            Ghar<span className="text-indigo-600 dark:text-indigo-400">Tak</span>
           </span>
           <span className="text-[10px] bg-indigo-600 text-white px-2.5 py-0.5 rounded-full font-bold tracking-wider uppercase shadow-xs">
             A TO Z APP
