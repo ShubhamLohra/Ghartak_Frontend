@@ -37,11 +37,11 @@ export const PartnerLeadHub: React.FC = () => {
   };
 
   return (
-    <section className="py-12 bg-[#0D0D12] min-h-screen">
+    <section className="py-12 bg-slate-50 dark:bg-[#0D0D12] text-slate-900 dark:text-slate-100 min-h-screen transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Ribbon */}
-        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-amber-500/30 mb-8 bg-gradient-to-r from-amber-500/10 via-[#181826] to-[#0D0D12]">
+        <div className="rounded-3xl p-6 sm:p-8 border border-amber-500/30 mb-8 bg-white dark:bg-gradient-to-r dark:from-amber-500/10 dark:via-[#181826] dark:to-[#0D0D12] shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             <div className="flex items-center gap-4">
@@ -52,28 +52,28 @@ export const PartnerLeadHub: React.FC = () => {
                 <span className="text-[10px] font-extrabold bg-amber-500 text-black px-2.5 py-0.5 rounded uppercase tracking-wider">
                   Partner Worker Portal
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">
                   Ghar Tak Lead Marketplace
                 </h2>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-slate-600 dark:text-slate-300">
                   Accept customer service requests & track your daily earnings
                 </p>
               </div>
             </div>
 
-            {/* Daily Quota & Earnings Stats (matching handwritten note!) */}
+            {/* Daily Quota & Earnings Stats */}
             <div className="flex items-center gap-4 w-full md:w-auto">
               
-              <div className="bg-[#1C1C2C] border border-amber-500/30 rounded-2xl p-4 text-center flex-1 md:w-36">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Daily Lead Limit</span>
-                <p className="text-2xl font-black text-amber-400 mt-1">{dailyLeadsRemaining} / 3</p>
+              <div className="bg-slate-100 dark:bg-[#1C1C2C] border border-amber-500/30 rounded-2xl p-4 text-center flex-1 md:w-36">
+                <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Daily Lead Limit</span>
+                <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{dailyLeadsRemaining} / 3</p>
                 <span className="text-[9px] text-slate-500">Leads Remaining</span>
               </div>
 
-              <div className="bg-[#1C1C2C] border border-amber-500/30 rounded-2xl p-4 text-center flex-1 md:w-36">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Today's Earnings</span>
+              <div className="bg-slate-100 dark:bg-[#1C1C2C] border border-amber-500/30 rounded-2xl p-4 text-center flex-1 md:w-36">
+                <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Earnings</span>
                 <p className="text-2xl font-black text-gold-gradient mt-1">₹{todayEarnings}</p>
-                <span className="text-[9px] text-emerald-400 font-bold">Payout Ready</span>
+                <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">Payout Ready</span>
               </div>
 
             </div>
@@ -83,39 +83,39 @@ export const PartnerLeadHub: React.FC = () => {
 
         {/* Available Job Leads Grid */}
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <Zap className="w-5 h-5 text-amber-400" />
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Zap className="w-5 h-5 text-amber-500 dark:text-amber-400" />
             <span>Available Doorstep Leads in Your Area</span>
           </h3>
-          <span className="text-xs text-slate-400">{leads.length} Active Requests</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{leads.length} Active Requests</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {leads.map((lead) => (
-            <div key={lead.id} className="glass-card rounded-2xl p-5 border border-slate-800 hover:border-amber-500/40 transition-all flex flex-col justify-between">
+            <div key={lead.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 transition-all flex flex-col justify-between shadow-xs">
               
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-bold bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-full uppercase border border-amber-500/30">
+                  <span className="text-[10px] font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 px-2.5 py-1 rounded-full uppercase border border-amber-300 dark:border-amber-500/30">
                     {lead.serviceCategory}
                   </span>
-                  <span className="text-xs font-extrabold text-emerald-400">{lead.distance}</span>
+                  <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">{lead.distance}</span>
                 </div>
 
-                <h4 className="text-base font-bold text-white mb-1">{lead.customerName}</h4>
-                <p className="text-xs text-slate-400 mb-3 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                <h4 className="text-base font-bold text-slate-900 dark:text-white mb-1">{lead.customerName}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                   <span>{lead.location}</span>
                 </p>
 
-                <p className="text-xs text-slate-300 bg-[#161622] p-3 rounded-xl border border-slate-800 line-clamp-3 mb-4">
+                <p className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-[#161622] p-3 rounded-xl border border-slate-200 dark:border-slate-800 line-clamp-3 mb-4">
                   "{lead.requirementDetails}"
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-slate-400 font-medium">Estimated Payout</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Estimated Payout</span>
                   <p className="text-xl font-extrabold text-gold-gradient">₹{lead.estimatedPayout}</p>
                 </div>
 
