@@ -782,27 +782,67 @@ export const AdminDashboard: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Appliance Repair"
+                  placeholder="e.g. Laundry & Dry Cleaning"
                   value={newCategory.name}
-                  onChange={e => setNewCategory({ ...newCategory, name: e.target.value })}
+                  onChange={e => {
+                    const val = e.target.value;
+                    let suggestedGroup = newCategory.categoryGroup;
+                    if (val.toLowerCase().includes('laundry') || val.toLowerCase().includes('clean')) {
+                      suggestedGroup = 'Home Care';
+                    } else if (val.toLowerCase().includes('electric')) {
+                      suggestedGroup = 'Hardware & Electrical';
+                    } else if (val.toLowerCase().includes('plumb')) {
+                      suggestedGroup = 'Hardware & Plumbing';
+                    } else if (val.toLowerCase().includes('carpent')) {
+                      suggestedGroup = 'Hardware & Carpentry';
+                    } else if (val.toLowerCase().includes('repair') || val.toLowerCase().includes('appliance')) {
+                      suggestedGroup = 'Appliance Repair';
+                    }
+                    setNewCategory({ ...newCategory, name: val, categoryGroup: suggestedGroup });
+                  }}
                   className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 outline-none font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Category Group</label>
-                <select
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-slate-700 font-semibold">Category Group</label>
+                  <span className="text-[10px] text-indigo-600 font-bold">Select preset or type custom</span>
+                </div>
+                <input
+                  type="text"
+                  list="category-group-presets"
+                  required
+                  placeholder="e.g. Home Care"
                   value={newCategory.categoryGroup}
                   onChange={e => setNewCategory({ ...newCategory, categoryGroup: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 outline-none font-medium"
-                >
-                  <option value="Hardware & Electrical">Hardware & Electrical</option>
-                  <option value="Hardware & Plumbing">Hardware & Plumbing</option>
-                  <option value="Hardware & Carpentry">Hardware & Carpentry</option>
-                  <option value="Construction & Structural">Construction & Structural</option>
-                  <option value="Home Care">Home Care</option>
-                  <option value="Appliance Repair">Appliance Repair</option>
-                </select>
+                />
+                <datalist id="category-group-presets">
+                  <option value="Home Care" />
+                  <option value="Laundry & Dry Cleaning" />
+                  <option value="Hardware & Electrical" />
+                  <option value="Hardware & Plumbing" />
+                  <option value="Hardware & Carpentry" />
+                  <option value="Construction & Structural" />
+                  <option value="Appliance Repair" />
+                </datalist>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {['Home Care', 'Laundry & Dry Cleaning', 'Hardware & Electrical', 'Hardware & Plumbing', 'Hardware & Carpentry', 'Appliance Repair'].map(grp => (
+                    <button
+                      key={grp}
+                      type="button"
+                      onClick={() => setNewCategory({ ...newCategory, categoryGroup: grp })}
+                      className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-colors ${
+                        newCategory.categoryGroup === grp
+                          ? 'bg-indigo-100 text-indigo-800 border-indigo-300'
+                          : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                      }`}
+                    >
+                      {grp}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
