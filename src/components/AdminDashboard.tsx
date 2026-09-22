@@ -571,12 +571,12 @@ export const AdminDashboard: React.FC = () => {
             {/* Service Commission Rules Table */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Service Base Charges & Commission Rates</h3>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Service Category Base Charges & Commission Rates</h3>
                 <button
                   onClick={handleOpenAddCategoryModal}
                   className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
                 >
-                  + Add Service
+                  + Add Service Category
                 </button>
               </div>
 
@@ -584,7 +584,7 @@ export const AdminDashboard: React.FC = () => {
                 <table className="w-full text-xs text-left text-slate-700 dark:text-slate-300">
                   <thead className="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 uppercase font-semibold border-b border-slate-200 dark:border-slate-800">
                     <tr>
-                      <th className="p-3">Service Name</th>
+                      <th className="p-3">Service Category Name</th>
                       <th className="p-3">Base Price</th>
                       <th className="p-3">Commission Rate</th>
                       <th className="p-3">Commission Type</th>
@@ -643,14 +643,14 @@ export const AdminDashboard: React.FC = () => {
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Service Catalog & Pricing Manager</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure base prices and admin commission</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Service Category Catalog & Pricing Manager</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Configure base prices and admin commission</p>
                 </div>
                 <button
                   onClick={handleOpenAddCategoryModal}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl"
                 >
-                  + Add New Service
+                  + Add Service Category
                 </button>
               </div>
 
@@ -905,14 +905,14 @@ export const AdminDashboard: React.FC = () => {
           <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-h-[92vh] flex flex-col">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                {editingCategory ? 'Edit Service & Charges' : 'Add New Service & Charges'}
+                {editingCategory ? 'Edit Service Category' : 'Add New Service Category'}
               </h3>
               <button onClick={() => { setIsAddCategoryModalOpen(false); setEditingCategory(null); }} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="w-5 h-5" /></button>
             </div>
             
             <form onSubmit={handleSaveCategorySubmit} className="space-y-3.5 text-xs overflow-y-auto pr-1">
               <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Service Name</label>
+                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Service Category Name</label>
                 <input
                   type="text"
                   required
@@ -978,15 +978,15 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Specific Service Options & Individual Charges */}
+              {/* Services under this Category */}
               <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div>
                     <label className="block text-slate-800 dark:text-slate-200 font-bold text-xs">
-                      Specific Service Options & Charges
+                      Services under this Category
                     </label>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Add options & pricing (e.g. Wash & Fold ₹80/kg, Dry Clean Suit ₹300/piece)
+                      Add services & pricing (e.g. Wash & Fold ₹80/kg, Wash + Iron ₹120/kg)
                     </p>
                   </div>
                   {!isServiceItemFormOpen && (
@@ -995,7 +995,7 @@ export const AdminDashboard: React.FC = () => {
                       onClick={handleOpenAddServiceItem}
                       className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 font-bold rounded-xl text-xs flex items-center gap-1 transition-all"
                     >
-                      <Plus className="w-3.5 h-3.5" /> Add Option
+                      <Plus className="w-3.5 h-3.5" /> Add Service
                     </button>
                   )}
                 </div>
@@ -1035,11 +1035,11 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 )}
 
-                {/* Inline Add / Edit Option Form */}
+                {/* Inline Add / Edit Service Form */}
                 {isServiceItemFormOpen && (
                   <div className="p-3 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-xl border border-indigo-200 dark:border-indigo-800 space-y-2.5 animate-fade-in text-xs">
                     <div className="flex items-center justify-between font-bold text-indigo-950 dark:text-indigo-200">
-                      <span>{editingServiceItem ? 'Edit Option' : 'Add New Service Option'}</span>
+                      <span>{editingServiceItem ? 'Edit Service' : 'Add New Service'}</span>
                       <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -1047,18 +1047,18 @@ export const AdminDashboard: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Option Title *</label>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Service Name *</label>
                         <input
                           type="text"
                           required
-                          placeholder="e.g. Wash & Fold, Dry Clean Suit"
+                          placeholder="e.g. Wash & Fold, Wash + Iron"
                           value={newServiceItem.title}
                           onChange={e => setNewServiceItem({ ...newServiceItem, title: e.target.value })}
                           className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Price (₹) *</label>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Service Price (₹) *</label>
                         <input
                           type="number"
                           required
@@ -1099,7 +1099,7 @@ export const AdminDashboard: React.FC = () => {
 
                     <div className="flex justify-end gap-1.5 pt-1">
                       <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-lg text-[11px]">Cancel</button>
-                      <button type="button" onClick={handleSaveInlineServiceOption} className="px-3.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[11px] shadow-sm">Save Option</button>
+                      <button type="button" onClick={handleSaveInlineServiceOption} className="px-3.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[11px] shadow-sm">Save Service</button>
                     </div>
                   </div>
                 )}
