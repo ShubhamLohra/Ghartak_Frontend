@@ -125,20 +125,6 @@ export const AdminDashboard: React.FC = () => {
     isPopular: false
   });
 
-  const handleOpenServiceItemsModal = async (cat: ServiceCategory) => {
-    setSelectedCategoryForItems(cat);
-    setIsServiceItemsModalOpen(true);
-    setIsServiceItemFormOpen(false);
-    setEditingServiceItem(null);
-    try {
-      const items = await api.getServicesByCategory(cat.id);
-      setCategoryServiceItems(items);
-    } catch (err) {
-      console.error('Error fetching service items:', err);
-      setCategoryServiceItems([]);
-    }
-  };
-
   const handleOpenAddServiceItem = () => {
     setEditingServiceItem(null);
     setNewServiceItem({
@@ -167,37 +153,54 @@ export const AdminDashboard: React.FC = () => {
     setIsServiceItemFormOpen(true);
   };
 
-  const handleSaveServiceItemSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCategoryForItems) return;
-    try {
+  const handleSaveInlineServiceOption = async () => {
+    if (!newServiceItem.title.trim()) {
+      showToast('Please enter an option title', 'error');
+      return;
+    }
+
+    if (editingCategory && editingCategory.id) {
+      try {
+        if (editingServiceItem && editingServiceItem.id) {
+          await api.updateServiceItem(editingServiceItem.id, newServiceItem);
+          showToast('Service option updated!', 'success');
+        } else {
+          await api.saveServiceItem(editingCategory.id, newServiceItem);
+          showToast('Service option added!', 'success');
+        }
+        const updated = await api.getServicesByCategory(editingCategory.id);
+        setCategoryServiceItems(updated);
+        setIsServiceItemFormOpen(false);
+        setEditingServiceItem(null);
+      } catch (err) {
+        showToast('Failed to save service option', 'error');
+      }
+    } else {
       if (editingServiceItem) {
-        await api.updateServiceItem(editingServiceItem.id, newServiceItem);
-        showToast('Service option updated successfully!', 'success');
+        setCategoryServiceItems(prev => prev.map(item => item === editingServiceItem ? { ...item, ...newServiceItem } as ServiceItem : item));
       } else {
-        await api.saveServiceItem(selectedCategoryForItems.id, newServiceItem);
-        showToast('New service option added successfully!', 'success');
+        setCategoryServiceItems(prev => [...prev, { ...newServiceItem, id: Date.now() } as ServiceItem]);
       }
       setIsServiceItemFormOpen(false);
       setEditingServiceItem(null);
-      const updated = await api.getServicesByCategory(selectedCategoryForItems.id);
-      setCategoryServiceItems(updated);
-    } catch (err) {
-      showToast('Failed to save service option', 'error');
+      showToast('Option added to list', 'success');
     }
   };
 
   const handleDeleteServiceItem = async (itemId: number) => {
     if (!window.confirm('Are you sure you want to delete this service option?')) return;
-    try {
-      await api.deleteServiceItem(itemId);
-      showToast('Service option deleted', 'success');
-      if (selectedCategoryForItems) {
-        const updated = await api.getServicesByCategory(selectedCategoryForItems.id);
+    if (editingCategory && editingCategory.id && itemId > 1000) {
+      try {
+        await api.deleteServiceItem(itemId);
+        showToast('Service option deleted', 'success');
+        const updated = await api.getServicesByCategory(editingCategory.id);
         setCategoryServiceItems(updated);
+      } catch (err) {
+        showToast('Failed to delete service option', 'error');
       }
-    } catch (err) {
-      showToast('Failed to delete service option', 'error');
+    } else {
+      setCategoryServiceItems(prev => prev.filter(item => item.id !== itemId));
+      showToast('Option removed', 'success');
     }
   };
 
@@ -212,10 +215,12 @@ export const AdminDashboard: React.FC = () => {
       commissionRate: 15,
       commissionType: 'PERCENTAGE'
     });
+    setCategoryServiceItems([]);
+    setIsServiceItemFormOpen(false);
     setIsAddCategoryModalOpen(true);
   };
 
-  const handleOpenEditCategoryModal = (cat: ServiceCategory) => {
+  const handleOpenEditCategoryModal = async (cat: ServiceCategory) => {
     setEditingCategory(cat);
     setNewCategory({
       name: cat.name || '',
@@ -226,7 +231,15 @@ export const AdminDashboard: React.FC = () => {
       commissionRate: cat.commissionRate || 15,
       commissionType: (cat.commissionType as 'PERCENTAGE' | 'FIXED') || 'PERCENTAGE'
     });
+    setCategoryServiceItems([]);
+    setIsServiceItemFormOpen(false);
     setIsAddCategoryModalOpen(true);
+    try {
+      const items = await api.getServicesByCategory(cat.id);
+      setCategoryServiceItems(items);
+    } catch (err) {
+      setCategoryServiceItems([]);
+    }
   };
 
   const handleDeleteCategoryPrompt = (cat: ServiceCategory) => {
@@ -582,17 +595,9 @@ export const AdminDashboard: React.FC = () => {
                         <td className="p-3 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <button
-                              onClick={() => handleOpenServiceItemsModal(c)}
-                              className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
-                              title="Manage Options & Prices"
-                            >
-                              <Sliders className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                              <span>Options & Prices</span>
-                            </button>
-                            <button
                               onClick={() => handleOpenEditCategoryModal(c)}
                               className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
-                              title="Edit Service & Commission"
+                              title="Edit Service, Commission & Options"
                             >
                               <Pencil className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                               <span>Edit</span>
@@ -661,13 +666,6 @@ export const AdminDashboard: React.FC = () => {
                       <span>Base Price: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹{c.baseCharge || 149}</strong></span>
                       <span>Commission: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
                     </div>
-                    <button
-                      onClick={() => handleOpenServiceItemsModal(c)}
-                      className="w-full py-2 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs mt-2"
-                    >
-                      <Sliders className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                      <span>Manage Options & Prices</span>
-                    </button>
                   </div>
                 ))}
               </div>
@@ -885,17 +883,18 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL: ADD / EDIT SERVICE WITH COMMISSION */}
+      {/* MODAL: ADD / EDIT SERVICE WITH COMMISSION & SERVICE OPTIONS */}
       {isAddCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
+          <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-h-[92vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                {editingCategory ? 'Edit Service & Commission' : 'Add New Service & Commission'}
+                {editingCategory ? 'Edit Service & Charges' : 'Add New Service & Charges'}
               </h3>
               <button onClick={() => { setIsAddCategoryModalOpen(false); setEditingCategory(null); }} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSaveCategorySubmit} className="space-y-3.5 text-xs">
+            
+            <form onSubmit={handleSaveCategorySubmit} className="space-y-3.5 text-xs overflow-y-auto pr-1">
               <div>
                 <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Service Name</label>
                 <input
@@ -963,6 +962,133 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Specific Service Options & Individual Charges */}
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-slate-800 dark:text-slate-200 font-bold text-xs">
+                      Specific Service Options & Charges
+                    </label>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Add options & pricing (e.g. Wash & Fold ₹80/kg, Dry Clean Suit ₹300/piece)
+                    </p>
+                  </div>
+                  {!isServiceItemFormOpen && (
+                    <button
+                      type="button"
+                      onClick={handleOpenAddServiceItem}
+                      className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 font-bold rounded-xl text-xs flex items-center gap-1 transition-all"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Option
+                    </button>
+                  )}
+                </div>
+
+                {/* List of Current Service Options */}
+                {categoryServiceItems.length > 0 && (
+                  <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1">
+                    {categoryServiceItems.map((item, idx) => (
+                      <div key={item.id || idx} className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900 dark:text-slate-100">{item.title}</span>
+                          <span className="font-semibold text-emerald-600 dark:text-emerald-400">₹{item.price}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded font-medium">
+                            {item.unitType || 'per job'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditServiceItem(item)}
+                            className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                            title="Edit option"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteServiceItem(item.id)}
+                            className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                            title="Remove option"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Inline Add / Edit Option Form */}
+                {isServiceItemFormOpen && (
+                  <div className="p-3 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-xl border border-indigo-200 dark:border-indigo-800 space-y-2.5 animate-fade-in text-xs">
+                    <div className="flex items-center justify-between font-bold text-indigo-950 dark:text-indigo-200">
+                      <span>{editingServiceItem ? 'Edit Option' : 'Add New Service Option'}</span>
+                      <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Option Title *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Wash & Fold, Dry Clean Suit"
+                          value={newServiceItem.title}
+                          onChange={e => setNewServiceItem({ ...newServiceItem, title: e.target.value })}
+                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Price (₹) *</label>
+                        <input
+                          type="number"
+                          required
+                          value={newServiceItem.price}
+                          onChange={e => setNewServiceItem({ ...newServiceItem, price: parseFloat(e.target.value) || 0 })}
+                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Unit Charge Format *</label>
+                        <select
+                          value={newServiceItem.unitType}
+                          onChange={e => setNewServiceItem({ ...newServiceItem, unitType: e.target.value })}
+                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium"
+                        >
+                          <option value="per kg">per kg (Laundry / Dry Clean)</option>
+                          <option value="per piece">per piece (Dry Clean / Item)</option>
+                          <option value="per job">per job (Standard Fix)</option>
+                          <option value="per visit">per visit (Checkup Fee)</option>
+                          <option value="per hour">per hour (Labor Charge)</option>
+                          <option value="per sqft">per sqft (Painting / Tiling)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Duration</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 24 Hours, 30 Mins"
+                          value={newServiceItem.duration}
+                          onChange={e => setNewServiceItem({ ...newServiceItem, duration: e.target.value })}
+                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-1.5 pt-1">
+                      <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-lg text-[11px]">Cancel</button>
+                      <button type="button" onClick={handleSaveInlineServiceOption} className="px-3.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[11px] shadow-sm">Save Option</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
@@ -979,291 +1105,6 @@ export const AdminDashboard: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: RE-ASSIGN BOOKING */}
-      {isReassignModalOpen && selectedBookingForReassign && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Re-assign Provider for #{selectedBookingForReassign.bookingCode}</h3>
-              <button onClick={() => setIsReassignModalOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="w-5 h-5" /></button>
-            </div>
-            <form onSubmit={handleReassignBookingSubmit} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Select New Provider</label>
-                <select
-                  onChange={e => setReassignProviderId(parseInt(e.target.value))}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                >
-                  <option value="">Select a professional...</option>
-                  {providers.map(p => (
-                    <option key={p.id} value={p.id}>{p.fullName} ({p.profession}) - ★ {p.rating}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Re-assignment Reason</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Previous technician bike breakdown"
-                  value={reassignReason}
-                  onChange={e => setReassignReason(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setIsReassignModalOpen(false)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl transition-colors">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm">Confirm Re-assign</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: CUSTOM DELETE CONFIRMATION POP-UP */}
-      {categoryToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl text-center">
-            
-            {/* Close Button */}
-            <button 
-              onClick={() => setCategoryToDelete(null)} 
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Warning Icon Badge */}
-            <div className="w-16 h-16 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xs">
-              <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
-            </div>
-
-            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">Delete Service Confirmation</h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-              Are you sure you want to delete <strong className="text-slate-900 dark:text-slate-100 font-bold">"{categoryToDelete.name}"</strong>? 
-              This action will permanently remove this service from the catalog and cannot be undone.
-            </p>
-
-            <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <button
-                type="button"
-                onClick={() => setCategoryToDelete(null)}
-                className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold text-xs transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={confirmDeleteCategory}
-                disabled={isDeletingCategory}
-                className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span>{isDeletingCategory ? 'Deleting...' : 'Yes, Delete Service'}</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* MODAL: MANAGE INDIVIDUAL SERVICE OPTIONS & PRICING */}
-      {isServiceItemsModalOpen && selectedCategoryForItems && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-h-[90vh] flex flex-col">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Service Category</span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <span>{selectedCategoryForItems.name}</span>
-                  <span className="text-xs px-2.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 rounded-full font-semibold border border-indigo-200 dark:border-indigo-800">
-                    {categoryServiceItems.length} Options
-                  </span>
-                </h3>
-              </div>
-              <button 
-                onClick={() => { setIsServiceItemsModalOpen(false); setSelectedCategoryForItems(null); }} 
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Content Body */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-5">
-
-              {/* Add / Edit Form Toggle */}
-              {!isServiceItemFormOpen ? (
-                <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">Service Options & Charges</h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Configure charges (e.g. Wash & Fold ₹80/kg, Dry Clean Suit ₹300/piece)</p>
-                  </div>
-                  <button
-                    onClick={handleOpenAddServiceItem}
-                    className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Service Option</span>
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSaveServiceItemSubmit} className="bg-indigo-50/50 dark:bg-indigo-950/40 p-4 rounded-2xl border border-indigo-200 dark:border-indigo-800/80 space-y-3 animate-fade-in text-xs">
-                  <div className="flex justify-between items-center pb-2 border-b border-indigo-100 dark:border-indigo-900/60">
-                    <h4 className="font-bold text-indigo-950 dark:text-indigo-200 text-sm">
-                      {editingServiceItem ? 'Edit Service Option' : 'Add New Service Option'}
-                    </h4>
-                    <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Option Title *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Wash & Fold, Dry Clean Suit"
-                        value={newServiceItem.title}
-                        onChange={e => setNewServiceItem({ ...newServiceItem, title: e.target.value })}
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Unit Charge Format *</label>
-                      <select
-                        value={newServiceItem.unitType}
-                        onChange={e => setNewServiceItem({ ...newServiceItem, unitType: e.target.value })}
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                      >
-                        <option value="per kg">per kg (Laundry / Dry Clean)</option>
-                        <option value="per piece">per piece (Dry Clean / Item)</option>
-                        <option value="per job">per job (Standard Fix)</option>
-                        <option value="per visit">per visit (Checkup Fee)</option>
-                        <option value="per hour">per hour (Labor Charge)</option>
-                        <option value="per sqft">per sqft (Painting / Tiling)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Price (₹) *</label>
-                      <input
-                        type="number"
-                        required
-                        value={newServiceItem.price}
-                        onChange={e => setNewServiceItem({ ...newServiceItem, price: parseFloat(e.target.value) || 0 })}
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Original Price (₹)</label>
-                      <input
-                        type="number"
-                        value={newServiceItem.originalPrice}
-                        onChange={e => setNewServiceItem({ ...newServiceItem, originalPrice: parseFloat(e.target.value) || 0 })}
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Duration</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 24 Hours, 30 Mins"
-                        value={newServiceItem.duration}
-                        onChange={e => setNewServiceItem({ ...newServiceItem, duration: e.target.value })}
-                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Description</label>
-                    <input
-                      type="text"
-                      placeholder="Brief details about what is included"
-                      value={newServiceItem.description}
-                      onChange={e => setNewServiceItem({ ...newServiceItem, description: e.target.value })}
-                      className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
-                    />
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-2">
-                    <button type="button" onClick={() => setIsServiceItemFormOpen(false)} className="px-3.5 py-2 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-xl">Cancel</button>
-                    <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm">{editingServiceItem ? 'Update Option' : 'Save Option'}</button>
-                  </div>
-                </form>
-              )}
-
-              {/* Service Options Table */}
-              {categoryServiceItems.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400 text-xs">
-                  No specific service options added yet. Click "Add Service Option" above to create options like Wash & Fold ₹80/kg.
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase font-semibold">
-                      <tr>
-                        <th className="p-3">Option Title</th>
-                        <th className="p-3">Charge</th>
-                        <th className="p-3">Unit</th>
-                        <th className="p-3">Duration</th>
-                        <th className="p-3 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-900 dark:text-slate-100 font-medium">
-                      {categoryServiceItems.map(item => (
-                        <tr key={item.id} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20">
-                          <td className="p-3">
-                            <div className="font-bold text-slate-900 dark:text-slate-100">{item.title}</div>
-                            {item.description && <div className="text-[11px] text-slate-500 dark:text-slate-400 font-normal">{item.description}</div>}
-                          </td>
-                          <td className="p-3 font-bold text-emerald-600 dark:text-emerald-400">
-                            ₹{item.price}
-                            {item.originalPrice && item.originalPrice > item.price && (
-                              <span className="text-[10px] text-slate-400 line-through ml-1">₹{item.originalPrice}</span>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded font-semibold text-[10px]">
-                              {item.unitType || 'per job'}
-                            </span>
-                          </td>
-                          <td className="p-3 text-slate-500 dark:text-slate-400">{item.duration || 'Standard'}</td>
-                          <td className="p-3 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                onClick={() => handleOpenEditServiceItem(item)}
-                                className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-lg transition-colors"
-                                title="Edit Option"
-                              >
-                                <Pencil className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteServiceItem(item.id)}
-                                className="p-1.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 rounded-lg transition-colors"
-                                title="Delete Option"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-            </div>
           </div>
         </div>
       )}
