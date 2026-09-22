@@ -10,6 +10,7 @@ export interface User {
   pincode?: string;
   role: Role;
   profession?: string;
+  designation?: string;
   rating?: number;
   completedJobs?: number;
   totalEarnings?: number;

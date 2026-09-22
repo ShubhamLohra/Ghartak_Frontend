@@ -81,7 +81,8 @@ export const AdminDashboard: React.FC = () => {
     email: '',
     phone: '',
     profession: 'Electrician Services',
-    city: 'Hazaribagh (Main Town)',
+    designation: '',
+    city: 'Hazaribagh',
     address: ''
   });
 
@@ -346,7 +347,7 @@ export const AdminDashboard: React.FC = () => {
         dailyLeadsRemaining: 3
       });
       setIsOnboardModalOpen(false);
-      setNewPartner({ fullName: '', email: '', phone: '', profession: 'Electrician Services', city: 'Hazaribagh', address: '' });
+      setNewPartner({ fullName: '', email: '', phone: '', profession: 'Electrician Services', designation: '', city: 'Hazaribagh', address: '' });
       loadAdminData();
       showToast(`Partner ${newPartner.fullName} onboarded successfully!`);
     } catch (err) {
@@ -715,7 +716,9 @@ export const AdminDashboard: React.FC = () => {
                         {p.rating && p.rating > 0 ? `★ ${p.rating}` : '★ New Partner'}
                       </span>
                     </div>
-                    <p className="text-indigo-600 dark:text-indigo-400 font-semibold">{p.profession || 'Service Provider'}</p>
+                    <p className="text-indigo-600 dark:text-indigo-400 font-semibold">
+                      {p.designation ? `${p.designation} (${p.profession})` : p.profession || 'Service Provider'}
+                    </p>
                     <p className="text-slate-500 dark:text-slate-400">
                       📍 {p.city || 'Hazaribagh'} {p.address ? `(${p.address})` : ''} • 📞 {p.phone}
                     </p>
@@ -900,6 +903,16 @@ export const AdminDashboard: React.FC = () => {
                     )}
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Designation / Professional Title (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Senior Electrician, Master Plumber, Lead Technician"
+                  value={newPartner.designation}
+                  onChange={e => setNewPartner({ ...newPartner, designation: e.target.value })}
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

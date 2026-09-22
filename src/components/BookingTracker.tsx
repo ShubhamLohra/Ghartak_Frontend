@@ -190,7 +190,7 @@ export const BookingTracker: React.FC = () => {
                           <h4 className="font-bold text-xs text-slate-900 dark:text-slate-100">{b.provider.fullName}</h4>
                           <span className="text-[10px] text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 font-semibold px-1.5 py-0.2 rounded">✓ Verified</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400">{b.provider.profession || 'Professional'} • ★ {b.provider.rating || 4.8} ({b.provider.completedJobs || 300}+ jobs)</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">{b.provider.designation || b.provider.profession || 'Professional'} • ★ {b.provider.rating || 4.8} ({b.provider.completedJobs || 300}+ jobs)</p>
                       </div>
                     </div>
                     <a
