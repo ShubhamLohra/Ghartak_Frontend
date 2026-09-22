@@ -113,15 +113,15 @@ export const CartDrawer: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-sm flex justify-end">
-      <div className="w-full max-w-md bg-white border-l border-slate-200 text-slate-900 h-full flex flex-col justify-between shadow-2xl animate-slide-left">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 h-full flex flex-col justify-between shadow-2xl animate-slide-left">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
               {bookingStep === 6 ? 'Booking Status' : `Step ${bookingStep} of 5`}
             </span>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">
               {bookingStep === 1 && 'Select Services'}
               {bookingStep === 2 && 'Describe Issue'}
               {bookingStep === 3 && 'Choose Address'}
@@ -143,25 +143,25 @@ export const CartDrawer: React.FC = () => {
           {bookingStep === 1 && (
             <>
               {cart.length === 0 ? (
-                <div className="py-20 text-center text-slate-500">
-                  <p className="text-base font-bold text-slate-800">Your cart is empty</p>
+                <div className="py-20 text-center text-slate-500 dark:text-slate-400">
+                  <p className="text-base font-bold text-slate-800 dark:text-slate-200">Your cart is empty</p>
                   <p className="text-xs mt-1">Select a service to start your booking.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {cart.map((item) => (
-                    <div key={item.service.id} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3">
+                    <div key={item.service.id} className="p-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-between gap-3">
                       <div className="flex-1">
-                        <p className="text-xs font-bold text-slate-900">{item.service.title}</p>
-                        <p className="text-xs text-indigo-600 font-bold mt-0.5">₹{item.service.price}</p>
+                        <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{item.service.title}</p>
+                        <p className="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">₹{item.service.price}</p>
                       </div>
 
-                      <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-1">
-                        <button onClick={() => updateQuantity(item.service.id, -1)} className="p-1 hover:text-indigo-600">
+                      <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-1">
+                        <button onClick={() => updateQuantity(item.service.id, -1)} className="p-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                           <Minus className="w-3.5 h-3.5" />
                         </button>
                         <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.service.id, 1)} className="p-1 hover:text-indigo-600">
+                        <button onClick={() => updateQuantity(item.service.id, 1)} className="p-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -179,8 +179,8 @@ export const CartDrawer: React.FC = () => {
           {/* STEP 2: Describe Issue */}
           {bookingStep === 2 && (
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <MessageSquare className="w-4 h-4 text-indigo-600" />
+              <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+                <MessageSquare className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 Describe your issue
               </h3>
 
@@ -189,11 +189,11 @@ export const CartDrawer: React.FC = () => {
                 placeholder="Explain what is broken, leaking, or needs repair (e.g. kitchen tap leaking heavily since morning)..."
                 value={issueDescription}
                 onChange={(e) => setIssueDescription(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-indigo-600"
               />
 
               <div>
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 p-3 rounded-xl hover:bg-indigo-100 transition-colors">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 p-3 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors">
                   <Camera className="w-4 h-4" />
                   <span>{issuePhoto ? `Photo attached: ${issuePhoto}` : '+ Upload photo of the problem (optional)'}</span>
                   <input
@@ -210,8 +210,8 @@ export const CartDrawer: React.FC = () => {
           {/* STEP 3: Choose Address */}
           {bookingStep === 3 && (
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-indigo-600" />
+              <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 Select Service Address
               </h3>
 
@@ -222,8 +222,8 @@ export const CartDrawer: React.FC = () => {
                     onClick={() => setSelectedAddressIndex(idx)}
                     className={`p-3.5 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${
                       selectedAddressIndex === idx
-                        ? 'bg-indigo-50/70 border-indigo-500 font-semibold'
-                        : 'bg-white border-slate-200 text-slate-700'
+                        ? 'bg-indigo-50/70 dark:bg-indigo-950/60 border-indigo-500 font-semibold'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <input
@@ -234,8 +234,8 @@ export const CartDrawer: React.FC = () => {
                       className="mt-1 text-indigo-600 focus:ring-indigo-500"
                     />
                     <div>
-                      <span className="text-xs font-bold text-slate-900">Address {idx + 1}</span>
-                      <p className="text-xs text-slate-600 mt-0.5">{addr}</p>
+                      <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Address {idx + 1}</span>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{addr}</p>
                     </div>
                   </label>
                 ))}
@@ -244,23 +244,23 @@ export const CartDrawer: React.FC = () => {
               {!isAddingNewAddress ? (
                 <button
                   onClick={() => setIsAddingNewAddress(true)}
-                  className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1 mt-2"
+                  className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 mt-2"
                 >
                   <Plus className="w-4 h-4" /> Add new address
                 </button>
               ) : (
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl space-y-2">
                   <input
                     type="text"
                     placeholder="Enter complete house address & landmark..."
                     value={newAddressInput}
                     onChange={(e) => setNewAddressInput(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-900 outline-none"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 outline-none"
                   />
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setIsAddingNewAddress(false)}
-                      className="px-3 py-1.5 text-xs text-slate-600 font-medium"
+                      className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 font-medium"
                     >
                       Cancel
                     </button>
@@ -280,8 +280,8 @@ export const CartDrawer: React.FC = () => {
           {bookingStep === 4 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-indigo-600" />
+                <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   Select Date
                 </h3>
                 <div className="grid grid-cols-3 gap-2">
@@ -292,7 +292,7 @@ export const CartDrawer: React.FC = () => {
                       className={`p-3 rounded-xl text-xs font-bold border transition-colors tap-target ${
                         selectedDay === day
                           ? 'bg-indigo-600 text-white border-indigo-600'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-indigo-300'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                       }`}
                     >
                       {day}
@@ -302,8 +302,8 @@ export const CartDrawer: React.FC = () => {
               </div>
 
               <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-indigo-600" />
+                <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   Select Time Slot
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
@@ -318,8 +318,8 @@ export const CartDrawer: React.FC = () => {
                       onClick={() => setSelectedSlot(slot)}
                       className={`p-3 rounded-xl text-xs font-semibold border text-center transition-colors tap-target ${
                         selectedSlot === slot
-                          ? 'bg-indigo-50 border-indigo-600 text-indigo-700 font-bold'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-indigo-300'
+                          ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-600 text-indigo-700 dark:text-indigo-300 font-bold'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300'
                       }`}
                     >
                       {slot}
@@ -333,29 +333,29 @@ export const CartDrawer: React.FC = () => {
           {/* STEP 5: Price Breakdown & Confirmation */}
           {bookingStep === 5 && (
             <div className="space-y-4">
-              <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-2.5 text-xs text-slate-700">
-                <h3 className="font-bold text-sm text-slate-900 mb-2">Price Breakdown</h3>
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-2.5 text-xs text-slate-700 dark:text-slate-300">
+                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">Price Breakdown</h3>
                 <div className="flex justify-between">
                   <span>Service Charges</span>
-                  <span className="font-semibold text-slate-900">₹{totalAmount}</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">₹{totalAmount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Visit / Inspection Fee</span>
-                  <span className="font-semibold text-slate-900">₹{visitFee}</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">₹{visitFee}</span>
                 </div>
-                <div className="pt-2 border-t border-slate-200 flex justify-between text-sm font-bold text-slate-900">
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between text-sm font-bold text-slate-900 dark:text-slate-100">
                   <span>Total Estimated Price</span>
-                  <span className="text-indigo-600">₹{grandTotal}</span>
+                  <span className="text-indigo-600 dark:text-indigo-400">₹{grandTotal}</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-800">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
                 <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                 <p>Final price may vary depending on the specific work or spare parts required at your home.</p>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 p-3.5 text-xs text-slate-600 space-y-1">
-                <p className="font-semibold text-slate-900">Booking Summary:</p>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3.5 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                <p className="font-semibold text-slate-900 dark:text-slate-100">Booking Summary:</p>
                 <p>📍 {currentAddress}</p>
                 <p>📅 {selectedDay}, {selectedSlot}</p>
               </div>
@@ -365,33 +365,33 @@ export const CartDrawer: React.FC = () => {
           {/* STEP 6: Booking Confirmed Screen */}
           {bookingStep === 6 && (
             <div className="text-center py-4 space-y-6">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-md">
+              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-md">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Booking Confirmed!</h3>
-                <p className="text-xs text-slate-500 mt-1">Booking ID: <span className="font-mono font-bold text-slate-900">{confirmedBookingId}</span></p>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Booking Confirmed!</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Booking ID: <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{confirmedBookingId}</span></p>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4 text-left text-xs space-y-2">
-                <p className="font-bold text-slate-900 text-sm">{cart[0]?.service?.title || 'Home Service'}</p>
-                <p className="text-slate-600">📅 {selectedDay}, {selectedSlot}</p>
-                <p className="text-slate-600">📍 {currentAddress}</p>
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 text-left text-xs space-y-2">
+                <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{cart[0]?.service?.title || 'Home Service'}</p>
+                <p className="text-slate-600 dark:text-slate-300">📅 {selectedDay}, {selectedSlot}</p>
+                <p className="text-slate-600 dark:text-slate-300">📍 {currentAddress}</p>
               </div>
 
               {/* Assigned Professional Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 text-left space-y-2 shadow-xs">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-left space-y-2 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">
+                  <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-sm">
                     RK
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h4 className="font-bold text-sm text-slate-900">Rahul Kumar</h4>
-                      <span className="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded">✓ Verified</span>
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">Rahul Kumar</h4>
+                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold px-1.5 py-0.5 rounded">✓ Verified</span>
                     </div>
-                    <p className="text-xs text-slate-500">Service Professional • ★ 4.8 (324 jobs)</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Service Professional • ★ 4.8 (324 jobs)</p>
                   </div>
                 </div>
               </div>
@@ -405,7 +405,7 @@ export const CartDrawer: React.FC = () => {
                 </button>
                 <a
                   href="tel:18001234567"
-                  className="block w-full py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold text-xs border border-slate-200 text-center"
+                  className="block w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-semibold text-xs border border-slate-200 dark:border-slate-700 text-center"
                 >
                   Contact Support
                 </a>
@@ -417,11 +417,11 @@ export const CartDrawer: React.FC = () => {
 
         {/* Footer Navigation Buttons */}
         {cart.length > 0 && bookingStep < 6 && (
-          <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
+          <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
             {bookingStep > 1 && (
               <button
                 onClick={() => setBookingStep((prev) => (prev - 1) as any)}
-                className="px-4 py-3 bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl tap-target"
+                className="px-4 py-3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl tap-target"
               >
                 Back
               </button>

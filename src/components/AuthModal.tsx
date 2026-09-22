@@ -63,53 +63,53 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl">
         
         {/* Close Button */}
         <button
           onClick={() => setIsAuthModalOpen(false)}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors tap-target"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors tap-target"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
         <div className="text-center mb-5">
-          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-xs">
+          <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-xs">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h3 className="text-xl font-bold text-slate-900">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {isSignUp ? 'Create Ghartak Account' : 'Welcome to Ghartak'}
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">Enter your account credentials to continue</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Enter your account credentials to continue</p>
         </div>
 
         {/* Quick Demo Preset Chips */}
         {!isSignUp && (
-          <div className="mb-4 p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+          <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
+            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-2">
               Quick 1-Tap Fill Credentials:
             </span>
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => handlePresetSelect('admin@ghartak.com', 'admin123')}
-                className="px-2.5 py-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-950/80 hover:bg-indigo-200 dark:hover:bg-indigo-900 text-indigo-800 dark:text-indigo-300 font-bold rounded-lg text-[11px] transition-colors"
               >
                 👑 Super Admin
               </button>
               <button
                 type="button"
                 onClick={() => handlePresetSelect('user@ghartak.com', 'user123')}
-                className="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold rounded-lg text-[11px] transition-colors"
               >
                 👤 Customer
               </button>
               <button
                 type="button"
                 onClick={() => handlePresetSelect('rajesh.electric@ghartak.com', 'worker123')}
-                className="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-lg text-[11px] transition-colors"
+                className="px-2.5 py-1 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold rounded-lg text-[11px] transition-colors"
               >
                 👷 Service Partner
               </button>
@@ -118,7 +118,7 @@ export const AuthModal: React.FC = () => {
         )}
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl mb-4 text-center">
+          <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 text-xs rounded-xl mb-4 text-center">
             {error}
           </div>
         )}
@@ -128,7 +128,7 @@ export const AuthModal: React.FC = () => {
           
           {isSignUp && (
             <div>
-              <label className="text-xs text-slate-700 font-semibold">Full Name</label>
+              <label className="text-xs text-slate-700 dark:text-slate-300 font-semibold">Full Name</label>
               <div className="relative mt-1">
                 <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -136,7 +136,7 @@ export const AuthModal: React.FC = () => {
                   placeholder="Shubham Kumar"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 outline-none font-medium"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none font-medium"
                   required
                 />
               </div>
@@ -144,7 +144,7 @@ export const AuthModal: React.FC = () => {
           )}
 
           <div>
-            <label className="text-xs text-slate-700 font-semibold">Email Address</label>
+            <label className="text-xs text-slate-700 dark:text-slate-300 font-semibold">Email Address</label>
             <div className="relative mt-1">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -152,14 +152,14 @@ export const AuthModal: React.FC = () => {
                 placeholder="admin@ghartak.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 outline-none font-medium"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none font-medium"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-slate-700 font-semibold">Password</label>
+            <label className="text-xs text-slate-700 dark:text-slate-300 font-semibold">Password</label>
             <div className="relative mt-1">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -167,7 +167,7 @@ export const AuthModal: React.FC = () => {
                 placeholder="admin123"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 outline-none font-medium"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none font-medium"
                 required
               />
             </div>
@@ -175,19 +175,19 @@ export const AuthModal: React.FC = () => {
 
           {isSignUp && (
             <div>
-              <label className="text-xs text-slate-700 font-semibold">Account Role</label>
+              <label className="text-xs text-slate-700 dark:text-slate-300 font-semibold">Account Role</label>
               <div className="grid grid-cols-2 gap-2 mt-1">
                 <button
                   type="button"
                   onClick={() => setRole('CUSTOMER')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${role === 'CUSTOMER' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`}
+                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${role === 'CUSTOMER' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'}`}
                 >
                   Customer
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('SERVICE_PROVIDER')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${role === 'SERVICE_PROVIDER' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`}
+                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${role === 'SERVICE_PROVIDER' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'}`}
                 >
                   Service Partner
                 </button>
@@ -208,7 +208,7 @@ export const AuthModal: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-xs text-indigo-600 font-semibold hover:underline"
+            className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
           >
             {isSignUp ? 'Already have an account? Log In' : "Don't have an account? Sign Up"}
           </button>

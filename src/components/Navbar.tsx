@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
             <div className="relative">
               <button 
                 onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-                className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-800 transition-all tap-target"
+                className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 transition-all tap-target"
               >
                 <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                 <span className="truncate max-w-[130px] sm:max-w-[180px]">{selectedCity}</span>
