@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GharTakLogo } from './GharTakLogo';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { 
   MapPin, 
   Search, 
@@ -14,7 +15,9 @@ import {
   Sparkles,
   ShieldCheck,
   CheckCircle2,
-  LayoutDashboard
+  LayoutDashboard,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -24,6 +27,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
   const { cart, totalItems, selectedCity, setSelectedCity, setIsCartOpen, activeView, setActiveView } = useCart();
   const { currentUser, openAuthModal } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
   const isAdmin = currentUser && (currentUser.role === 'ADMIN' || (currentUser.email && currentUser.email.toLowerCase().includes('admin')));
@@ -49,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
       </div>
 
       {/* Top Header Navigation */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           
           {/* Logo & Location Dropdown */}
@@ -111,6 +115,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
                 <span>{activeView === 'admin' ? 'Preview Customer App' : 'Admin Portal'}</span>
               </button>
             )}
+
+            {/* Night / Day Mode Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all tap-target flex items-center justify-center"
+              title={isDark ? "Switch to Day Mode" : "Switch to Night Mode"}
+              aria-label="Toggle Night Mode"
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5 text-amber-400 animate-spin-slow" />
+              ) : (
+                <Moon className="w-5 h-5 text-indigo-600" />
+              )}
+            </button>
 
             {/* Cart Trigger */}
             <button

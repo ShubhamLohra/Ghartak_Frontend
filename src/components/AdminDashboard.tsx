@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Booking, Review, ServiceCategory, User, AdminNotification } from '../types';
+import { useTheme } from '../context/ThemeContext';
 import { 
   LayoutDashboard, 
   TrendingUp, 
@@ -31,10 +32,13 @@ import {
   Sliders,
   X,
   Pencil,
-  Trash2
+  Trash2,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
+  const { isDark, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'analytics' | 'catalog' | 'providers' | 'dispatch' | 'insights' | 'cancellations'>('analytics');
   
   // Analytics State
@@ -284,6 +288,20 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Night Mode Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 transition-colors tap-target flex items-center justify-center"
+            title={isDark ? "Switch to Day Mode" : "Switch to Night Mode"}
+            aria-label="Toggle Night Mode"
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Moon className="w-5 h-5 text-indigo-600" />
+            )}
+          </button>
+
           {/* In-App Notification Bell */}
           <div className="relative">
             <button
