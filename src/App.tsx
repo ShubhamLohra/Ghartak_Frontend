@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { HeroBanner } from './components/HeroBanner';
 import { CategoryGrid } from './components/CategoryGrid';
@@ -20,10 +20,20 @@ import { ServiceCategory } from './types';
 import { api } from './services/api';
 
 const AppContent: React.FC = () => {
-  const { activeView } = useCart();
+  const { activeView, setActiveView } = useCart();
+  const { currentUser } = useAuth();
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const isAdmin = currentUser && (currentUser.role === 'ADMIN' || (currentUser.email && currentUser.email.toLowerCase().includes('admin')));
+
+  useEffect(() => {
+    // For Admin users, default their primary view to the Admin Portal
+    if (isAdmin && activeView === 'home') {
+      setActiveView('admin');
+    }
+  }, [isAdmin, activeView, setActiveView]);
 
   useEffect(() => {
     api.getCategories()
