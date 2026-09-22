@@ -29,7 +29,9 @@ import {
   AlertTriangle,
   UserPlus,
   Sliders,
-  X
+  X,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -79,17 +81,59 @@ export const AdminDashboard: React.FC = () => {
     address: ''
   });
 
-  // New Category State
+  // Category Management State (Add & Edit)
+  const [editingCategory, setEditingCategory] = useState<ServiceCategory | null>(null);
   const [newCategory, setNewCategory] = useState({
     name: '',
     code: '',
     iconName: 'Wrench',
     description: '',
-    categoryGroup: 'Home Care',
+    categoryGroup: 'Hardware & Electrical',
     baseCharge: 149,
     commissionRate: 15,
     commissionType: 'PERCENTAGE' as 'PERCENTAGE' | 'FIXED'
   });
+
+  const handleOpenAddCategoryModal = () => {
+    setEditingCategory(null);
+    setNewCategory({
+      name: '',
+      code: '',
+      iconName: 'Wrench',
+      description: '',
+      categoryGroup: 'Hardware & Electrical',
+      baseCharge: 149,
+      commissionRate: 15,
+      commissionType: 'PERCENTAGE'
+    });
+    setIsAddCategoryModalOpen(true);
+  };
+
+  const handleOpenEditCategoryModal = (cat: ServiceCategory) => {
+    setEditingCategory(cat);
+    setNewCategory({
+      name: cat.name || '',
+      code: cat.code || '',
+      iconName: cat.iconName || 'Wrench',
+      description: cat.description || '',
+      categoryGroup: cat.categoryGroup || 'Hardware & Electrical',
+      baseCharge: cat.baseCharge || 149,
+      commissionRate: cat.commissionRate || 15,
+      commissionType: (cat.commissionType as 'PERCENTAGE' | 'FIXED') || 'PERCENTAGE'
+    });
+    setIsAddCategoryModalOpen(true);
+  };
+
+  const handleDeleteCategory = async (cat: ServiceCategory) => {
+    if (!window.confirm(`Are you sure you want to delete "${cat.name}"? This action cannot be undone.`)) return;
+    try {
+      await api.deleteCategory(cat.id);
+      loadAdminData();
+      alert(`Category "${cat.name}" deleted successfully!`);
+    } catch (err) {
+      alert('Failed to delete category');
+    }
+  };
 
   const loadAdminData = async () => {
     setLoading(true);
@@ -172,17 +216,26 @@ export const AdminDashboard: React.FC = () => {
   const handleSaveCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.saveCategory({
+      const payload = {
         ...newCategory,
         code: newCategory.code || newCategory.name.toUpperCase().replace(/\s+/g, '_'),
         badgeText: '01 Verified',
         bgGradient: 'from-[#4F46E5] to-[#3730A3]'
-      });
+      };
+
+      if (editingCategory && editingCategory.id) {
+        await api.updateCategory(editingCategory.id, payload);
+        alert(`Service Category "${newCategory.name}" updated successfully!`);
+      } else {
+        await api.saveCategory(payload);
+        alert(`New Service Category "${newCategory.name}" added successfully!`);
+      }
+
       setIsAddCategoryModalOpen(false);
+      setEditingCategory(null);
       loadAdminData();
-      alert('New Service Category added successfully!');
     } catch (err) {
-      alert('Failed to add service category');
+      alert('Failed to save service category');
     }
   };
 
@@ -363,8 +416,8 @@ export const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Category Base Charges & Commission Rates</h3>
                 <button
-                  onClick={() => setIsAddCategoryModalOpen(true)}
-                  className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700"
+                  onClick={handleOpenAddCategoryModal}
+                  className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
                 >
                   + Add Category
                 </button>
@@ -378,17 +431,48 @@ export const AdminDashboard: React.FC = () => {
                       <th className="p-3">Group</th>
                       <th className="p-3">Base Charge</th>
                       <th className="p-3">Commission Rate</th>
-                      <th className="p-3">Type</th>
+                      <th className="p-3">Commission Type</th>
+                      <th className="p-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {categories.map(c => (
-                      <tr key={c.id} className="hover:bg-slate-900/50">
+                      <tr key={c.id} className="hover:bg-slate-900/50 transition-colors">
                         <td className="p-3 font-bold text-white">{c.name}</td>
-                        <td className="p-3 text-slate-400">{c.categoryGroup}</td>
+                        <td className="p-3 text-slate-400">{c.categoryGroup || 'Home Care'}</td>
                         <td className="p-3 font-semibold text-emerald-400">₹{c.baseCharge || 149}</td>
-                        <td className="p-3 font-bold text-indigo-400">{c.commissionRate || 15}%</td>
-                        <td className="p-3"><span className="px-2 py-0.5 bg-indigo-950 text-indigo-300 border border-indigo-800 rounded">{c.commissionType || 'PERCENTAGE'}</span></td>
+                        <td className="p-3 font-bold text-indigo-400">
+                          {c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}
+                        </td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 border text-[10px] font-bold rounded ${
+                            c.commissionType === 'FIXED' 
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800' 
+                              : 'bg-indigo-950/80 text-indigo-300 border-indigo-800'
+                          }`}>
+                            {c.commissionType === 'FIXED' ? 'FIXED AMOUNT (₹)' : 'PERCENTAGE (%)'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleOpenEditCategoryModal(c)}
+                              className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
+                              title="Edit Category & Commission"
+                            >
+                              <Pencil className="w-3.5 h-3.5 text-indigo-400" />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCategory(c)}
+                              className="px-2.5 py-1 bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/60 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
+                              title="Delete Category"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -408,7 +492,7 @@ export const AdminDashboard: React.FC = () => {
                   <p className="text-xs text-slate-400 mt-0.5">Configure base inspection charges, category groups, and admin commission</p>
                 </div>
                 <button
-                  onClick={() => setIsAddCategoryModalOpen(true)}
+                  onClick={handleOpenAddCategoryModal}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl"
                 >
                   + Add New Category
@@ -417,16 +501,32 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {categories.map(c => (
-                  <div key={c.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-2">
+                  <div key={c.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-2 relative group">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-indigo-400 uppercase">{c.code}</span>
-                      <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">{c.categoryGroup}</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">{c.categoryGroup || 'General'}</span>
+                        <button
+                          onClick={() => handleOpenEditCategoryModal(c)}
+                          className="p-1 text-slate-400 hover:text-indigo-400 rounded transition-colors"
+                          title="Edit Category"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCategory(c)}
+                          className="p-1 text-slate-400 hover:text-red-400 rounded transition-colors"
+                          title="Delete Category"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                     <h4 className="font-bold text-white text-sm">{c.name}</h4>
-                    <p className="text-xs text-slate-400 line-clamp-2">{c.description}</p>
+                    <p className="text-xs text-slate-400 line-clamp-2">{c.description || 'Verified Home Service Category'}</p>
                     <div className="pt-2 border-t border-slate-800 flex justify-between text-xs">
                       <span>Base Inspection: <strong className="text-white">₹{c.baseCharge || 149}</strong></span>
-                      <span>Commission: <strong className="text-indigo-400">{c.commissionRate || 15}%</strong></span>
+                      <span>Commission: <strong className="text-indigo-400">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
                     </div>
                   </div>
                 ))}
@@ -645,15 +745,17 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL: ADD CATEGORY WITH COMMISSION */}
+      {/* MODAL: ADD / EDIT CATEGORY WITH COMMISSION */}
       {isAddCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">Add Service Category & Commission</h3>
-              <button onClick={() => setIsAddCategoryModalOpen(false)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <h3 className="text-base font-bold text-white">
+                {editingCategory ? 'Edit Service Category & Commission' : 'Add Service Category & Commission'}
+              </h3>
+              <button onClick={() => { setIsAddCategoryModalOpen(false); setEditingCategory(null); }} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSaveCategorySubmit} className="space-y-3 text-xs">
+            <form onSubmit={handleSaveCategorySubmit} className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Category Name</label>
                 <input
@@ -662,32 +764,95 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="e.g. Appliance Repair"
                   value={newCategory.name}
                   onChange={e => setNewCategory({ ...newCategory, name: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none font-medium"
                 />
               </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Category Group</label>
+                <select
+                  value={newCategory.categoryGroup}
+                  onChange={e => setNewCategory({ ...newCategory, categoryGroup: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none font-medium"
+                >
+                  <option value="Hardware & Electrical">Hardware & Electrical</option>
+                  <option value="Hardware & Plumbing">Hardware & Plumbing</option>
+                  <option value="Hardware & Carpentry">Hardware & Carpentry</option>
+                  <option value="Construction & Structural">Construction & Structural</option>
+                  <option value="Home Care">Home Care</option>
+                  <option value="Appliance Repair">Appliance Repair</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">Base Inspection (₹)</label>
                   <input
                     type="number"
+                    required
                     value={newCategory.baseCharge}
-                    onChange={e => setNewCategory({ ...newCategory, baseCharge: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none"
+                    onChange={e => setNewCategory({ ...newCategory, baseCharge: parseFloat(e.target.value) || 0 })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Commission Rate</label>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    {newCategory.commissionType === 'PERCENTAGE' ? 'Commission Rate (%)' : 'Commission Amount (₹)'}
+                  </label>
                   <input
                     type="number"
+                    required
+                    placeholder={newCategory.commissionType === 'PERCENTAGE' ? '15' : '150'}
                     value={newCategory.commissionRate}
-                    onChange={e => setNewCategory({ ...newCategory, commissionRate: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none"
+                    onChange={e => setNewCategory({ ...newCategory, commissionRate: parseFloat(e.target.value) || 0 })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white outline-none font-medium"
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-2 pt-3">
-                <button type="button" onClick={() => setIsAddCategoryModalOpen(false)} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-indigo-600 text-white font-bold rounded-xl">Save Category</button>
+
+              {/* Commission Calculation Type Selector */}
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Commission Type Mode</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewCategory({ ...newCategory, commissionType: 'PERCENTAGE' })}
+                    className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                      newCategory.commissionType === 'PERCENTAGE'
+                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm'
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                    }`}
+                  >
+                    Percentage (%)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewCategory({ ...newCategory, commissionType: 'FIXED' })}
+                    className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                      newCategory.commissionType === 'FIXED'
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                    }`}
+                  >
+                    Fixed Amount (₹)
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => { setIsAddCategoryModalOpen(false); setEditingCategory(null); }}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-all"
+                >
+                  {editingCategory ? 'Update Category' : 'Save Category'}
+                </button>
               </div>
             </form>
           </div>

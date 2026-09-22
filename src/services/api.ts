@@ -176,6 +176,23 @@ export const api = {
     return res.json();
   },
 
+  async updateCategory(id: number, categoryData: any): Promise<ServiceCategory> {
+    const res = await fetch(`${API_BASE}/admin/categories/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(categoryData)
+    });
+    if (!res.ok) throw new Error('Failed to update category');
+    return res.json();
+  },
+
+  async deleteCategory(id: number): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/categories/${id}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete category');
+  },
+
   async getAdminNotifications(): Promise<AdminNotification[]> {
     const res = await fetch(`${API_BASE}/admin/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
