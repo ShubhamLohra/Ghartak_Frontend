@@ -1,30 +1,25 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  currentUser: User | null;
   token: string | null;
   login: (userData: User, token: string) => void;
   logout: () => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  openAuthModal: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Default logged in test customer for instant frictionless preview
-  const [user, setUser] = useState<User | null>({
-    id: 2,
-    email: 'user@ghartak.com',
-    fullName: 'Shubham Kumar',
-    phone: '9811223344',
-    address: 'Lake Road, Matwari',
-    city: 'Hazaribagh (Main Town)',
-    pincode: '825301',
-    role: 'CUSTOMER'
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('ghartak_user');
+    return saved ? JSON.parse(saved) : null;
   });
-  const [token, setToken] = useState<string | null>('mock-jwt-token-ghartak');
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('ghartak_token'));
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   const login = (userData: User, authToken: string) => {
@@ -42,15 +37,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('ghartak_user');
   };
 
+  const openAuthModal = () => {
+    setIsAuthModalOpen(true);
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
+        currentUser: user,
         token,
         login,
         logout,
         isAuthModalOpen,
-        setIsAuthModalOpen
+        setIsAuthModalOpen,
+        openAuthModal
       }}
     >
       {children}
