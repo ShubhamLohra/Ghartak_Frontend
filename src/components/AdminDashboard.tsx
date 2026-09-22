@@ -115,7 +115,15 @@ export const AdminDashboard: React.FC = () => {
   const [categoryServiceItems, setCategoryServiceItems] = useState<ServiceItem[]>([]);
   const [editingServiceItem, setEditingServiceItem] = useState<ServiceItem | null>(null);
   const [isServiceItemFormOpen, setIsServiceItemFormOpen] = useState(false);
-  const [newServiceItem, setNewServiceItem] = useState({
+  const [newServiceItem, setNewServiceItem] = useState<{
+    title: string;
+    description: string;
+    price: number | string;
+    originalPrice: number | string;
+    unitType: string;
+    duration: string;
+    isPopular: boolean;
+  }>({
     title: '',
     description: '',
     price: 80,
@@ -130,8 +138,8 @@ export const AdminDashboard: React.FC = () => {
     setNewServiceItem({
       title: '',
       description: '',
-      price: 80,
-      originalPrice: 100,
+      price: '',
+      originalPrice: '',
       unitType: 'per kg',
       duration: '24 Hours',
       isPopular: false
@@ -159,13 +167,19 @@ export const AdminDashboard: React.FC = () => {
       return;
     }
 
+    const payload = {
+      ...newServiceItem,
+      price: newServiceItem.price === '' ? 0 : parseFloat(String(newServiceItem.price)) || 0,
+      originalPrice: newServiceItem.originalPrice === '' ? 0 : parseFloat(String(newServiceItem.originalPrice)) || 0
+    };
+
     if (editingCategory && editingCategory.id) {
       try {
         if (editingServiceItem && editingServiceItem.id) {
-          await api.updateServiceItem(editingServiceItem.id, newServiceItem);
+          await api.updateServiceItem(editingServiceItem.id, payload);
           showToast('Service option updated!', 'success');
         } else {
-          await api.saveServiceItem(editingCategory.id, newServiceItem);
+          await api.saveServiceItem(editingCategory.id, payload);
           showToast('Service option added!', 'success');
         }
         const updated = await api.getServicesByCategory(editingCategory.id);
@@ -177,9 +191,9 @@ export const AdminDashboard: React.FC = () => {
       }
     } else {
       if (editingServiceItem) {
-        setCategoryServiceItems(prev => prev.map(item => item === editingServiceItem ? { ...item, ...newServiceItem } as ServiceItem : item));
+        setCategoryServiceItems(prev => prev.map(item => item === editingServiceItem ? { ...item, ...payload } as ServiceItem : item));
       } else {
-        setCategoryServiceItems(prev => [...prev, { ...newServiceItem, id: Date.now() } as ServiceItem]);
+        setCategoryServiceItems(prev => [...prev, { ...payload, id: Date.now() } as ServiceItem]);
       }
       setIsServiceItemFormOpen(false);
       setEditingServiceItem(null);
@@ -345,6 +359,8 @@ export const AdminDashboard: React.FC = () => {
     try {
       const payload = {
         ...newCategory,
+        baseCharge: newCategory.baseCharge === '' ? 0 : parseFloat(String(newCategory.baseCharge)) || 0,
+        commissionRate: newCategory.commissionRate === '' ? 0 : parseFloat(String(newCategory.commissionRate)) || 0,
         code: newCategory.code || newCategory.name.toUpperCase().replace(/\s+/g, '_'),
         badgeText: '01 Verified',
         bgGradient: 'from-[#4F46E5] to-[#3730A3]'
@@ -914,7 +930,7 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     required
                     value={newCategory.baseCharge}
-                    onChange={e => setNewCategory({ ...newCategory, baseCharge: parseFloat(e.target.value) || 0 })}
+                    onChange={e => setNewCategory({ ...newCategory, baseCharge: e.target.value === '' ? '' : (parseFloat(e.target.value) || '') })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   />
                 </div>
@@ -927,7 +943,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     placeholder={newCategory.commissionType === 'PERCENTAGE' ? '15' : '150'}
                     value={newCategory.commissionRate}
-                    onChange={e => setNewCategory({ ...newCategory, commissionRate: parseFloat(e.target.value) || 0 })}
+                    onChange={e => setNewCategory({ ...newCategory, commissionRate: e.target.value === '' ? '' : (parseFloat(e.target.value) || '') })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   />
                 </div>
@@ -1047,7 +1063,7 @@ export const AdminDashboard: React.FC = () => {
                           type="number"
                           required
                           value={newServiceItem.price}
-                          onChange={e => setNewServiceItem({ ...newServiceItem, price: parseFloat(e.target.value) || 0 })}
+                          onChange={e => setNewServiceItem({ ...newServiceItem, price: e.target.value === '' ? '' : (parseFloat(e.target.value) || '') })}
                           className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
                         />
                       </div>
