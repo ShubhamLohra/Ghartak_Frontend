@@ -245,14 +245,14 @@ export const AdminDashboard: React.FC = () => {
       commissionRate: cat.commissionRate || 15,
       commissionType: (cat.commissionType as 'PERCENTAGE' | 'FIXED') || 'PERCENTAGE'
     });
-    setCategoryServiceItems([]);
+    setCategoryServiceItems(cat.services || []);
     setIsServiceItemFormOpen(false);
     setIsAddCategoryModalOpen(true);
     try {
       const items = await api.getServicesByCategory(cat.id);
       setCategoryServiceItems(items);
     } catch (err) {
-      setCategoryServiceItems([]);
+      // retain cat.services
     }
   };
 

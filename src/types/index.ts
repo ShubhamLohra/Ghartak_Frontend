@@ -36,11 +36,11 @@ export interface ServiceCategory {
   id: number;
   name: string;
   code: string;
-  iconName: string;
   description: string;
-  badgeText: string;
-  categoryGroup: string;
-  bgGradient: string;
+  iconName?: string;
+  badgeText?: string;
+  categoryGroup?: string;
+  bgGradient?: string;
   baseCharge?: number;
   commissionRate?: number;
   commissionType?: 'PERCENTAGE' | 'FIXED';
