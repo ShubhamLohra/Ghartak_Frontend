@@ -62,6 +62,25 @@ export const AdminDashboard: React.FC = () => {
 
   // Modals & Panels
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isOnboardModalOpen, setIsOnboardModalOpen] = useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
+
+  // Reassignment Target State
+  const [selectedBookingForReassign, setSelectedBookingForReassign] = useState<Booking | null>(null);
+  const [reassignProviderId, setReassignProviderId] = useState<number | null>(null);
+  const [reassignReason, setReassignReason] = useState('');
+
+  // New Provider State (Admin-Only Onboarding)
+  const [newPartner, setNewPartner] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    profession: 'Electrician Services',
+    city: 'Hazaribagh (Main Town)',
+    address: ''
+  });
+
   // Custom Confirmation & Toast States
   const [categoryToDelete, setCategoryToDelete] = useState<ServiceCategory | null>(null);
   const [isDeletingCategory, setIsDeletingCategory] = useState(false);
