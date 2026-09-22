@@ -193,6 +193,33 @@ export const api = {
     if (!res.ok) throw new Error('Failed to delete category');
   },
 
+  async saveServiceItem(categoryId: number, itemData: any): Promise<ServiceItem> {
+    const res = await fetch(`${API_BASE}/admin/services?categoryId=${categoryId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itemData)
+    });
+    if (!res.ok) throw new Error('Failed to save service option');
+    return res.json();
+  },
+
+  async updateServiceItem(id: number, itemData: any): Promise<ServiceItem> {
+    const res = await fetch(`${API_BASE}/admin/services/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itemData)
+    });
+    if (!res.ok) throw new Error('Failed to update service option');
+    return res.json();
+  },
+
+  async deleteServiceItem(id: number): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/services/${id}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete service option');
+  },
+
   async getAdminNotifications(): Promise<AdminNotification[]> {
     const res = await fetch(`${API_BASE}/admin/notifications`);
     if (!res.ok) throw new Error('Failed to fetch notifications');
