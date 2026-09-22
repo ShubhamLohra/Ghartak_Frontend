@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { User, MapPin, Phone, Mail, Shield, LogOut, ChevronRight, Calculator, HardHat, LayoutDashboard, Plus } from 'lucide-react';
+import { User, MapPin, Phone, Mail, Shield, LogOut, ChevronRight, Calculator, HardHat, LayoutDashboard, Plus, Crown } from 'lucide-react';
 
 export const ProfileSection: React.FC = () => {
   const { currentUser, logout, openAuthModal } = useAuth();
@@ -29,6 +29,8 @@ export const ProfileSection: React.FC = () => {
     );
   }
 
+  const isAdmin = currentUser.role === 'ADMIN' || (currentUser.email && currentUser.email.toLowerCase().includes('admin'));
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 mb-24">
       {/* Profile Card Header */}
@@ -39,9 +41,15 @@ export const ProfileSection: React.FC = () => {
         <div className="flex-1">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <h1 className="text-xl font-bold text-slate-900">{currentUser.fullName || 'User'}</h1>
-            <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full flex items-center gap-1">
-              ✓ Verified User
-            </span>
+            {isAdmin ? (
+              <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bold rounded-full flex items-center gap-1">
+                👑 Super Admin
+              </span>
+            ) : (
+              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                ✓ Verified User
+              </span>
+            )}
           </div>
           <div className="mt-2 space-y-1 text-xs sm:text-sm text-slate-600">
             <p className="flex items-center justify-center sm:justify-start gap-2">
@@ -55,6 +63,27 @@ export const ProfileSection: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Prominent Admin Banner if Admin */}
+      {isAdmin && (
+        <div className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white rounded-2xl p-5 shadow-md mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-amber-500 text-slate-900 rounded-xl font-bold">
+              <Crown className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-white">Super Admin Access Active</h3>
+              <p className="text-xs text-indigo-200 mt-0.5">Manage platform services, commissions, analytics & dispatching</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveView('admin')}
+            className="w-full sm:w-auto px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md shrink-0 tap-target"
+          >
+            Open Admin Portal →
+          </button>
+        </div>
+      )}
 
       {/* Saved Addresses */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-6">
@@ -88,12 +117,30 @@ export const ProfileSection: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-6">
         <h2 className="text-base font-bold text-slate-900 mb-4">Explore More Tools</h2>
         <div className="space-y-2">
+          {isAdmin && (
+            <button
+              onClick={() => setActiveView('admin')}
+              className="w-full p-3.5 bg-amber-50/70 hover:bg-amber-100/70 rounded-xl border border-amber-200 flex items-center justify-between transition-colors text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-500 text-slate-950 rounded-lg font-bold">
+                  <LayoutDashboard className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Admin Control Panel</h3>
+                  <p className="text-xs text-slate-600">Financial analytics, commission engine & live dispatching</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-amber-700" />
+            </button>
+          )}
+
           <button
             onClick={() => setActiveView('building_calculator')}
             className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 text-amber-700 rounded-lg">
+              <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
                 <Calculator className="w-5 h-5" />
               </div>
               <div>
@@ -119,24 +166,6 @@ export const ProfileSection: React.FC = () => {
             </div>
             <ChevronRight className="w-5 h-5 text-slate-400" />
           </button>
-
-          {(currentUser.role === 'ADMIN' || currentUser.email.includes('admin')) && (
-            <button
-              onClick={() => setActiveView('admin')}
-              className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between transition-colors text-left"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
-                  <LayoutDashboard className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900">Admin Control Panel</h3>
-                  <p className="text-xs text-slate-500">Manage bookings, providers & system catalog</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-slate-400" />
-            </button>
-          )}
         </div>
       </div>
 

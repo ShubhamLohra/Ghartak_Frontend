@@ -13,7 +13,8 @@ import {
   HelpCircle,
   Sparkles,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  LayoutDashboard
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -24,6 +25,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
   const { cart, totalItems, selectedCity, setSelectedCity, setIsCartOpen, activeView, setActiveView } = useCart();
   const { currentUser, openAuthModal } = useAuth();
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+
+  const isAdmin = currentUser && (currentUser.role === 'ADMIN' || (currentUser.email && currentUser.email.toLowerCase().includes('admin')));
 
   const cities = [
     'Hazaribagh (Main Town)',
@@ -94,6 +97,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
           {/* Right Header Actions */}
           <div className="flex items-center gap-2">
             
+            {/* Prominent Admin Portal Button for Admin Users */}
+            {isAdmin && (
+              <button
+                onClick={() => setActiveView('admin')}
+                className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 text-xs font-black rounded-xl transition-all shadow-sm border border-amber-400/60 tap-target"
+              >
+                <LayoutDashboard className="w-4 h-4 text-slate-900" />
+                <span>Admin Portal</span>
+              </button>
+            )}
+
             {/* Cart Trigger */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -139,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
           
           <button
             onClick={() => setActiveView('home')}
-            className={`flex flex-col items-center justify-center w-16 py-1 rounded-xl transition-colors tap-target ${
+            className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-colors tap-target ${
               activeView === 'home' ? 'text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
@@ -147,9 +161,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
             <span className="text-[11px]">Home</span>
           </button>
 
+          {isAdmin && (
+            <button
+              onClick={() => setActiveView('admin')}
+              className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-colors tap-target ${
+                activeView === 'admin' ? 'text-amber-600 font-bold' : 'text-amber-600/80 hover:text-amber-700 font-bold'
+              }`}
+            >
+              <LayoutDashboard className={`w-5 h-5 mb-0.5 ${activeView === 'admin' ? 'stroke-[2.5]' : 'stroke-2'}`} />
+              <span className="text-[11px]">Admin</span>
+            </button>
+          )}
+
           <button
             onClick={() => setActiveView('my_bookings')}
-            className={`flex flex-col items-center justify-center w-16 py-1 rounded-xl transition-colors tap-target ${
+            className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-colors tap-target ${
               activeView === 'my_bookings' ? 'text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
@@ -159,7 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
 
           <button
             onClick={() => setActiveView('help')}
-            className={`flex flex-col items-center justify-center w-16 py-1 rounded-xl transition-colors tap-target ${
+            className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-colors tap-target ${
               activeView === 'help' ? 'text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
@@ -169,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
 
           <button
             onClick={() => setActiveView('profile')}
-            className={`flex flex-col items-center justify-center w-16 py-1 rounded-xl transition-colors tap-target ${
+            className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-colors tap-target ${
               activeView === 'profile' ? 'text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
