@@ -62,24 +62,17 @@ export const AdminDashboard: React.FC = () => {
 
   // Modals & Panels
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isOnboardModalOpen, setIsOnboardModalOpen] = useState(false);
-  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
+  // Custom Confirmation & Toast States
+  const [categoryToDelete, setCategoryToDelete] = useState<ServiceCategory | null>(null);
+  const [isDeletingCategory, setIsDeletingCategory] = useState(false);
+  const [toastNotice, setToastNotice] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Reassignment Target State
-  const [selectedBookingForReassign, setSelectedBookingForReassign] = useState<Booking | null>(null);
-  const [reassignProviderId, setReassignProviderId] = useState<number | null>(null);
-  const [reassignReason, setReassignReason] = useState('');
-
-  // New Provider State (Admin-Only Onboarding)
-  const [newPartner, setNewPartner] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    profession: 'Electrician Services',
-    city: 'Hazaribagh (Main Town)',
-    address: ''
-  });
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastNotice({ message, type });
+    setTimeout(() => {
+      setToastNotice(null);
+    }, 4000);
+  };
 
   // Category Management State (Add & Edit)
   const [editingCategory, setEditingCategory] = useState<ServiceCategory | null>(null);
@@ -124,14 +117,22 @@ export const AdminDashboard: React.FC = () => {
     setIsAddCategoryModalOpen(true);
   };
 
-  const handleDeleteCategory = async (cat: ServiceCategory) => {
-    if (!window.confirm(`Are you sure you want to delete "${cat.name}"? This action cannot be undone.`)) return;
+  const handleDeleteCategoryPrompt = (cat: ServiceCategory) => {
+    setCategoryToDelete(cat);
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+    setIsDeletingCategory(true);
     try {
-      await api.deleteCategory(cat.id);
+      await api.deleteCategory(categoryToDelete.id);
+      showToast(`Category "${categoryToDelete.name}" deleted successfully!`, 'success');
+      setCategoryToDelete(null);
       loadAdminData();
-      alert(`Category "${cat.name}" deleted successfully!`);
     } catch (err) {
-      alert('Failed to delete category');
+      showToast('Failed to delete category', 'error');
+    } finally {
+      setIsDeletingCategory(false);
     }
   };
 
@@ -171,9 +172,10 @@ export const AdminDashboard: React.FC = () => {
   const handleUpdateStatus = async (bookingId: number, status: string, providerId?: number) => {
     try {
       await api.updateAdminBookingStatus(bookingId, status, providerId);
+      showToast(`Booking status updated to ${status}`);
       loadAdminData();
     } catch (err) {
-      alert('Failed to update status');
+      showToast('Failed to update status', 'error');
     }
   };
 
@@ -187,9 +189,9 @@ export const AdminDashboard: React.FC = () => {
       setSelectedBookingForReassign(null);
       setReassignReason('');
       loadAdminData();
-      alert('Booking successfully reassigned to new provider!');
+      showToast('Booking successfully reassigned to new provider!');
     } catch (err) {
-      alert('Failed to reassign booking');
+      showToast('Failed to reassign booking', 'error');
     }
   };
 
@@ -207,9 +209,9 @@ export const AdminDashboard: React.FC = () => {
       setIsOnboardModalOpen(false);
       setNewPartner({ fullName: '', email: '', phone: '', profession: 'Electrician Services', city: 'Hazaribagh (Main Town)', address: '' });
       loadAdminData();
-      alert(`Partner ${newPartner.fullName} onboarded successfully!`);
+      showToast(`Partner ${newPartner.fullName} onboarded successfully!`);
     } catch (err) {
-      alert('Failed to onboard provider');
+      showToast('Failed to onboard provider', 'error');
     }
   };
 
@@ -225,17 +227,17 @@ export const AdminDashboard: React.FC = () => {
 
       if (editingCategory && editingCategory.id) {
         await api.updateCategory(editingCategory.id, payload);
-        alert(`Service Category "${newCategory.name}" updated successfully!`);
+        showToast(`Service Category "${newCategory.name}" updated successfully!`);
       } else {
         await api.saveCategory(payload);
-        alert(`New Service Category "${newCategory.name}" added successfully!`);
+        showToast(`New Service Category "${newCategory.name}" added successfully!`);
       }
 
       setIsAddCategoryModalOpen(false);
       setEditingCategory(null);
       loadAdminData();
     } catch (err) {
-      alert('Failed to save service category');
+      showToast('Failed to save service category', 'error');
     }
   };
 
@@ -464,7 +466,7 @@ export const AdminDashboard: React.FC = () => {
                               <span>Edit</span>
                             </button>
                             <button
-                              onClick={() => handleDeleteCategory(c)}
+                              onClick={() => handleDeleteCategoryPrompt(c)}
                               className="px-2.5 py-1 bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/60 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
                               title="Delete Category"
                             >
@@ -514,7 +516,7 @@ export const AdminDashboard: React.FC = () => {
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteCategory(c)}
+                          onClick={() => handleDeleteCategoryPrompt(c)}
                           className="p-1 text-slate-400 hover:text-red-400 rounded transition-colors"
                           title="Delete Category"
                         >
@@ -896,6 +898,64 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </form>
           </div>
+        </div>
+      )}
+      {/* MODAL: CUSTOM DELETE CONFIRMATION POP-UP */}
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl text-center">
+            
+            {/* Close Button */}
+            <button 
+              onClick={() => setCategoryToDelete(null)} 
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Warning Icon Badge */}
+            <div className="w-16 h-16 bg-red-950/80 border border-red-800/80 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+
+            <h3 className="text-lg font-bold text-white tracking-tight">Delete Category Confirmation</h3>
+            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+              Are you sure you want to delete <strong className="text-white font-bold">"{categoryToDelete.name}"</strong>? 
+              This action will permanently remove it from the service catalog and cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-slate-800/80">
+              <button
+                type="button"
+                onClick={() => setCategoryToDelete(null)}
+                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteCategory}
+                disabled={isDeletingCategory}
+                className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>{isDeletingCategory ? 'Deleting...' : 'Yes, Delete Category'}</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING TOAST NOTIFICATION POP-UP */}
+      {toastNotice && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl shadow-2xl border text-xs font-bold flex items-center gap-2.5 animate-slide-up ${
+          toastNotice.type === 'error'
+            ? 'bg-red-950 text-red-200 border-red-800'
+            : 'bg-emerald-950 text-emerald-200 border-emerald-800'
+        }`}>
+          {toastNotice.type === 'error' ? <XCircle className="w-5 h-5 text-red-400" /> : <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
+          <span>{toastNotice.message}</span>
         </div>
       )}
 
