@@ -112,7 +112,7 @@ export const ServiceModal: React.FC<ServiceModalProps> = ({ category, onClose })
               );
             })
           ) : (
-            <p className="text-xs text-slate-500 dark:text-slate-400 py-4">Standard inspection service will be booked.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 py-4">Standard service will be booked.</p>
           )}
 
           {/* Not Sure What You Need Section */}

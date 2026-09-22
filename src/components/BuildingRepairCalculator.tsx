@@ -61,7 +61,7 @@ export const BuildingRepairCalculator: React.FC = () => {
             <div className="w-full lg:w-80 bg-slate-50 dark:bg-[#1E293B]/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-6 text-center shadow-md">
               <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Estimated Team Payout</span>
               <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 my-2">₹{totalEstimate.toLocaleString('en-IN')}</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 font-medium">Includes 100% verified workers & site inspection report</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4 font-medium">Includes 100% verified workers & site visit report</p>
               <button
                 onClick={handleBookTeam}
                 className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 hover:from-indigo-500 hover:to-indigo-400 text-white font-extrabold rounded-xl text-xs tracking-wider uppercase transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"

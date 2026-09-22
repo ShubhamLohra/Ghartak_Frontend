@@ -11,7 +11,7 @@ export const HelpSection: React.FC = () => {
     },
     {
       question: 'How does pricing work?',
-      answer: 'We show transparent starting prices upfront. A standard visit/inspection fee is included in your booking summary. If additional work or spare parts are required, the professional will inform you before starting.'
+      answer: 'We show transparent starting prices upfront. A standard visit fee is included in your booking summary. If additional work or spare parts are required, the professional will inform you before starting.'
     },
     {
       question: 'Are Ghartak professionals verified?',

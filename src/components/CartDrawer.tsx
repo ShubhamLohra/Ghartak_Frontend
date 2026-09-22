@@ -340,7 +340,7 @@ export const CartDrawer: React.FC = () => {
                   <span className="font-semibold text-slate-900 dark:text-slate-100">₹{totalAmount}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Visit / Inspection Fee</span>
+                  <span>Visit Fee</span>
                   <span className="font-semibold text-slate-900 dark:text-slate-100">₹{visitFee}</span>
                 </div>
                 <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between text-sm font-bold text-slate-900 dark:text-slate-100">

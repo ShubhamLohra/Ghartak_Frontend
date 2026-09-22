@@ -429,19 +429,19 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Gross GMV Money</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Total Sales</span>
                 <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">₹{(analyticsData.totalMoney || 48500).toLocaleString('en-IN')}</p>
                 <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 block">Total customer transactions</span>
               </div>
 
               <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Admin Net Commission</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Admin Earnings</span>
                 <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mt-1">₹{(analyticsData.totalCommission || 7275).toLocaleString('en-IN')}</p>
                 <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold mt-1 block">Platform Net Revenue (15% Avg)</span>
               </div>
 
               <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Provider Net Payouts</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Partner Payouts</span>
                 <p className="text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">₹{(analyticsData.totalPayout || 41225).toLocaleString('en-IN')}</p>
                 <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-1 block">After commission deduction</span>
               </div>
@@ -464,7 +464,7 @@ export const AdminDashboard: React.FC = () => {
                   <thead className="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 uppercase font-semibold border-b border-slate-200 dark:border-slate-800">
                     <tr>
                       <th className="p-3">Service Name</th>
-                      <th className="p-3">Base Charge</th>
+                      <th className="p-3">Base Price</th>
                       <th className="p-3">Commission Rate</th>
                       <th className="p-3">Commission Type</th>
                       <th className="p-3 text-right">Actions</th>
@@ -523,7 +523,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Service Catalog & Pricing Manager</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure base inspection charges and admin commission</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure base prices and admin commission</p>
                 </div>
                 <button
                   onClick={handleOpenAddCategoryModal}
@@ -558,7 +558,7 @@ export const AdminDashboard: React.FC = () => {
                     <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{c.name}</h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{c.description || 'Verified Home Service'}</p>
                     <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-xs text-slate-700 dark:text-slate-300">
-                      <span>Base Inspection: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹{c.baseCharge || 149}</strong></span>
+                      <span>Base Price: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹{c.baseCharge || 149}</strong></span>
                       <span>Commission: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
                     </div>
                   </div>
@@ -803,7 +803,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Base Inspection (₹)</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Base Price (₹)</label>
                   <input
                     type="number"
                     required
