@@ -1159,15 +1159,15 @@ export const AdminDashboard: React.FC = () => {
                         }}
                         className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium"
                       >
-                        <option value="per kg">per kg (Laundry / Dry Clean)</option>
-                        <option value="per piece">per piece (Dry Clean / Item)</option>
-                        <option value="per job">per job (Standard Fix)</option>
-                        <option value="per visit">per visit (Checkup Fee)</option>
-                        <option value="per hour">per hour (Labor Charge)</option>
-                        <option value="per sqft">per sqft (Painting / Tiling)</option>
-                        <option value="per point">per point (Electrical Points)</option>
-                        <option value="per meter">per meter (Wiring / Piping)</option>
-                        <option value="per AC unit">per AC unit (AC Servicing)</option>
+                        <option value="per kg">per kg</option>
+                        <option value="per piece">per piece</option>
+                        <option value="per job">per job</option>
+                        <option value="per visit">per visit</option>
+                        <option value="per hour">per hour</option>
+                        <option value="per sqft">per sqft</option>
+                        <option value="per point">per point</option>
+                        <option value="per meter">per meter</option>
+                        <option value="per AC unit">per AC unit</option>
                         <option value="CUSTOM">➕ Add Custom Unit Charge...</option>
                       </select>
 
