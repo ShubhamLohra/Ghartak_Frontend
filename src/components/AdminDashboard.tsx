@@ -723,7 +723,7 @@ export const AdminDashboard: React.FC = () => {
                       📍 {p.city || 'Hazaribagh'} {p.address ? `(${p.address})` : ''} • 📞 {p.phone}
                     </p>
                     <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-slate-700 dark:text-slate-300">
-                      <span>Jobs: <strong className="text-slate-900 dark:text-slate-100 font-bold">{p.completedJobs ?? 0}</strong></span>
+                      <span>Bookings: <strong className="text-slate-900 dark:text-slate-100 font-bold">{p.completedJobs ?? 0}</strong></span>
                       <span>Net Payout: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{((p.totalEarnings ?? 0) * 0.85).toLocaleString('en-IN')}</strong></span>
                     </div>
                   </div>

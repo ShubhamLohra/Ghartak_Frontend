@@ -391,7 +391,7 @@ export const CartDrawer: React.FC = () => {
                       <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">Rahul Kumar</h4>
                       <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold px-1.5 py-0.5 rounded">✓ Verified</span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Service Professional • ★ 4.8 (324 jobs)</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Service Professional • ★ 4.8 (324 bookings)</p>
                   </div>
                 </div>
               </div>
