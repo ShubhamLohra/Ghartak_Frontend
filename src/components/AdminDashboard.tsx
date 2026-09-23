@@ -1143,62 +1143,50 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Unit Charge Format *</label>
-                        <select
-                          value={isCustomUnitType ? 'CUSTOM' : newServiceItem.unitType}
-                          onChange={e => {
-                            if (e.target.value === 'CUSTOM') {
-                              setIsCustomUnitType(true);
-                              const initialCustom = customUnitTypeValue || 'per unit';
-                              setNewServiceItem({ ...newServiceItem, unitType: initialCustom });
-                            } else {
-                              setIsCustomUnitType(false);
-                              setNewServiceItem({ ...newServiceItem, unitType: e.target.value });
-                            }
-                          }}
-                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium"
-                        >
-                          <option value="per kg">per kg (Laundry / Dry Clean)</option>
-                          <option value="per piece">per piece (Dry Clean / Item)</option>
-                          <option value="per job">per job (Standard Fix)</option>
-                          <option value="per visit">per visit (Checkup Fee)</option>
-                          <option value="per hour">per hour (Labor Charge)</option>
-                          <option value="per sqft">per sqft (Painting / Tiling)</option>
-                          <option value="per point">per point (Electrical Points)</option>
-                          <option value="per meter">per meter (Wiring / Piping)</option>
-                          <option value="per AC unit">per AC unit (AC Servicing)</option>
-                          <option value="CUSTOM">➕ Add Custom Unit Charge...</option>
-                        </select>
+                    <div>
+                      <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Unit Charge Format *</label>
+                      <select
+                        value={isCustomUnitType ? 'CUSTOM' : newServiceItem.unitType}
+                        onChange={e => {
+                          if (e.target.value === 'CUSTOM') {
+                            setIsCustomUnitType(true);
+                            const initialCustom = customUnitTypeValue || 'per unit';
+                            setNewServiceItem({ ...newServiceItem, unitType: initialCustom });
+                          } else {
+                            setIsCustomUnitType(false);
+                            setNewServiceItem({ ...newServiceItem, unitType: e.target.value });
+                          }
+                        }}
+                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium"
+                      >
+                        <option value="per kg">per kg (Laundry / Dry Clean)</option>
+                        <option value="per piece">per piece (Dry Clean / Item)</option>
+                        <option value="per job">per job (Standard Fix)</option>
+                        <option value="per visit">per visit (Checkup Fee)</option>
+                        <option value="per hour">per hour (Labor Charge)</option>
+                        <option value="per sqft">per sqft (Painting / Tiling)</option>
+                        <option value="per point">per point (Electrical Points)</option>
+                        <option value="per meter">per meter (Wiring / Piping)</option>
+                        <option value="per AC unit">per AC unit (AC Servicing)</option>
+                        <option value="CUSTOM">➕ Add Custom Unit Charge...</option>
+                      </select>
 
-                        {isCustomUnitType && (
-                          <div className="mt-1.5">
-                            <input
-                              type="text"
-                              required
-                              placeholder="e.g. per room, per panel, per liter"
-                              value={newServiceItem.unitType}
-                              onChange={e => {
-                                setCustomUnitTypeValue(e.target.value);
-                                setNewServiceItem({ ...newServiceItem, unitType: e.target.value });
-                              }}
-                              className="w-full bg-slate-50 dark:bg-slate-900 border border-indigo-500 dark:border-indigo-400 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium placeholder-slate-400 shadow-xs"
-                            />
-                            <p className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium">✨ Type any custom unit format for this option.</p>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold mb-0.5">Duration</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. 24 Hours, 30 Mins"
-                          value={newServiceItem.duration}
-                          onChange={e => setNewServiceItem({ ...newServiceItem, duration: e.target.value })}
-                          className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none"
-                        />
-                      </div>
+                      {isCustomUnitType && (
+                        <div className="mt-1.5">
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. per room, per panel, per liter"
+                            value={newServiceItem.unitType}
+                            onChange={e => {
+                              setCustomUnitTypeValue(e.target.value);
+                              setNewServiceItem({ ...newServiceItem, unitType: e.target.value });
+                            }}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-indigo-500 dark:border-indigo-400 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 outline-none font-medium placeholder-slate-400 shadow-xs"
+                          />
+                          <p className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium">✨ Type any custom unit format for this option.</p>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex justify-end gap-1.5 pt-1">
