@@ -318,7 +318,20 @@ export const AdminDashboard: React.FC = () => {
       ]);
 
       setAnalyticsData(analyticsRes);
-      setCategories(catsRes);
+      
+      const categoriesWithServices = await Promise.all(
+        catsRes.map(async (cat) => {
+          if (cat.services && cat.services.length > 0) return cat;
+          try {
+            const items = await api.getServicesByCategory(cat.id);
+            return { ...cat, services: items };
+          } catch (e) {
+            return { ...cat, services: cat.services || [] };
+          }
+        })
+      );
+
+      setCategories(categoriesWithServices);
       setBookings(bookingsRes);
       setProviders(providersRes);
       setLeastBookedData(leastRes);
@@ -669,46 +682,105 @@ export const AdminDashboard: React.FC = () => {
         {activeTab === 'catalog' && (
           <div className="space-y-6">
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Service Category Catalog & Pricing Manager</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Configure base prices and admin commission</p>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Service Categories & Sub-Services Catalog</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Overview of all service categories, base charges, commission rates, and individual sub-service options</p>
                 </div>
                 <button
                   onClick={handleOpenAddCategoryModal}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 self-start sm:self-auto"
                 >
-                  + Add Service Category
+                  <Plus className="w-4 h-4" />
+                  <span>Add Service Category</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {categories.map(c => (
-                  <div key={c.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 transition-all space-y-2 relative group">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">{c.code}</span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleOpenEditCategoryModal(c)}
-                          className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition-colors"
-                          title="Edit Service"
-                        >
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteCategoryPrompt(c)}
-                          className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors"
-                          title="Delete Service"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                  <div key={c.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col justify-between space-y-4">
+                    <div className="space-y-3">
+                      {/* Category Header */}
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold rounded-lg uppercase">
+                            {c.code}
+                          </span>
+                          <h4 className="font-bold text-slate-900 dark:text-slate-100 text-base">{c.name}</h4>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleOpenEditCategoryModal(c)}
+                            className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
+                            title="Edit Service Category & Sub-services"
+                          >
+                            <Pencil className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCategoryPrompt(c)}
+                            className="p-1.5 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/60 rounded-lg transition-colors"
+                            title="Delete Category"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{c.name}</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{c.description || 'Verified Home Service'}</p>
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-xs text-slate-700 dark:text-slate-300">
-                      <span>Base Price: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹{c.baseCharge || 149}</strong></span>
-                      <span>Commission: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
+
+                      {/* Description & Base Rates */}
+                      <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">{c.description || 'Verified Home Service Category'}</p>
+                      
+                      <div className="flex items-center gap-3 text-xs bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 font-semibold">
+                        <span>Base Charge: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{c.baseCharge || 149}</strong></span>
+                        <span className="text-slate-300 dark:text-slate-700">•</span>
+                        <span>Commission: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
+                      </div>
+
+                      {/* Sub-Services List Header */}
+                      <div className="pt-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                            <Wrench className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                            Sub-Services & Pricing ({c.services?.length || 0})
+                          </span>
+                          <button
+                            onClick={() => handleOpenEditCategoryModal(c)}
+                            className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                          >
+                            + Manage Services
+                          </button>
+                        </div>
+
+                        {/* Sub-services Grid / List */}
+                        {c.services && c.services.length > 0 ? (
+                          <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                            {c.services.map(sub => (
+                              <div key={sub.id} className="bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl flex items-center justify-between text-xs transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/80">
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-slate-900 dark:text-slate-100">{sub.title}</span>
+                                    {sub.isPopular && (
+                                      <span className="px-1.5 py-0.2 bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 text-[9px] font-bold rounded">Popular</span>
+                                    )}
+                                  </div>
+                                  {sub.description && (
+                                    <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">{sub.description}</p>
+                                  )}
+                                </div>
+                                <div className="text-right pl-3 flex-shrink-0">
+                                  <span className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">₹{sub.price}</span>
+                                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">/ {sub.unitType || 'per job'}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="bg-slate-50 dark:bg-slate-800/30 border border-dashed border-slate-200 dark:border-slate-800 p-3 rounded-xl text-center text-xs text-slate-500 dark:text-slate-400">
+                            <span>No sub-services configured yet. </span>
+                            <button onClick={() => handleOpenEditCategoryModal(c)} className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Add sub-services</button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
