@@ -618,7 +618,7 @@ export const AdminDashboard: React.FC = () => {
             {/* Service Commission Rules Table */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Service Category Base Charges & Commission Rates</h3>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Service Category Booking Prices & Commission Rates</h3>
                 <button
                   onClick={handleOpenAddCategoryModal}
                   className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
@@ -632,7 +632,7 @@ export const AdminDashboard: React.FC = () => {
                   <thead className="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 uppercase font-semibold border-b border-slate-200 dark:border-slate-800">
                     <tr>
                       <th className="p-3">Service Category Name</th>
-                      <th className="p-3">Base Price</th>
+                      <th className="p-3">Booking Price</th>
                       <th className="p-3">Commission Rate</th>
                       <th className="p-3">Commission Type</th>
                       <th className="p-3 text-right">Actions</th>
@@ -737,7 +737,7 @@ export const AdminDashboard: React.FC = () => {
                       <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">{c.description || 'Verified Home Service Category'}</p>
                       
                       <div className="flex items-center gap-3 text-xs bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 font-semibold">
-                        <span>Base Charge: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{c.baseCharge || 149}</strong></span>
+                        <span>Booking Price: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">₹{c.baseCharge || 149}</strong></span>
                         <span className="text-slate-300 dark:text-slate-700">•</span>
                         <span>Commission: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{c.commissionType === 'FIXED' ? `₹${c.commissionRate || 150}` : `${c.commissionRate || 15}%`}</strong></span>
                       </div>
@@ -1077,7 +1077,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Base Price (₹)</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Booking Price (₹)</label>
                   <input
                     type="number"
                     required
@@ -1085,6 +1085,7 @@ export const AdminDashboard: React.FC = () => {
                     onChange={e => setNewCategory({ ...newCategory, baseCharge: e.target.value === '' ? '' : (parseFloat(e.target.value) || '') })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   />
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Charged at the time of booking</p>
                 </div>
                 <div>
                   <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
@@ -1098,6 +1099,7 @@ export const AdminDashboard: React.FC = () => {
                     onChange={e => setNewCategory({ ...newCategory, commissionRate: e.target.value === '' ? '' : (parseFloat(e.target.value) || '') })}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 outline-none font-medium"
                   />
+                  <p className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 font-medium">Applied to all services in category</p>
                 </div>
               </div>
 
