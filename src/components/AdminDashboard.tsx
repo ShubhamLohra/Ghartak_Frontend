@@ -450,17 +450,23 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Night Mode Toggle Button */}
+          {/* Night / Day Mode Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-amber-300 transition-colors tap-target flex items-center justify-center"
-            title={isDark ? "Switch to Day Mode" : "Switch to Night Mode"}
-            aria-label="Toggle Night Mode"
+            className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors tap-target flex items-center justify-center gap-1.5 shadow-xs"
+            title={isDark ? "Switch to Day Mode (Light Theme)" : "Switch to Night Mode (Dark Theme)"}
+            aria-label="Toggle Theme Mode"
           >
             {isDark ? (
-              <Sun className="w-5 h-5 text-amber-400" />
+              <>
+                <Sun className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-bold text-amber-400 hidden sm:inline">Day Mode</span>
+              </>
             ) : (
-              <Moon className="w-5 h-5 text-indigo-600" />
+              <>
+                <Moon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:inline">Night Mode</span>
+              </>
             )}
           </button>
 
